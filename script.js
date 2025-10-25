@@ -1382,55 +1382,69 @@ function loadDynamicScript(src) {
         document.body.appendChild(script);
     });
 }
-
 document.addEventListener("DOMContentLoaded", function () {
-  // Get all elements with class 'dynamic-content'
+  const loadedScripts = new Set(); // Prevent duplicate loads
   const contentDivs = document.querySelectorAll(".dynamic-content");
 
-  // Iterate over each div
-  contentDivs.forEach(function (contentDiv) {
+  contentDivs.forEach((contentDiv) => {
     const href = contentDiv.getAttribute("data-href");
     const scriptSrc = contentDiv.getAttribute("data-script");
 
-    if (!href) return; // Skip if no data-href found
+    if (!href) return;
 
-    // Create and configure XMLHttpRequest
     const xhr = new XMLHttpRequest();
     xhr.open("GET", href, true);
 
-    // Handle response
     xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
         if (xhr.status === 200) {
-          // Insert the fetched HTML content into the div
           contentDiv.innerHTML = xhr.responseText;
 
-          // If a script source is defined, load and execute it
-          if (scriptSrc) {
+          // Load external script only if specified
+          if (scriptSrc && !loadedScripts.has(scriptSrc)) {
             loadDynamicScript(scriptSrc)
               .then(() => {
-                // After script is loaded, find and run inline script (if present)
-                const inlineScript = contentDiv.querySelector("script");
-                if (inlineScript) {
-                  try {
-                    eval(inlineScript.textContent);
-                  } catch (e) {
-                    console.error( scriptSrc + "Error executing inline script:", e);
-                  }
-                }
+                loadedScripts.add(scriptSrc);
+                runInlineScript(contentDiv, scriptSrc);
               })
-              .catch((error) =>
-                console.error(`Error loading script ${scriptSrc}:`, error)
+              .catch((err) =>
+                console.error(`❌ Error loading script "${scriptSrc}":`, err)
               );
+          } else {
+            runInlineScript(contentDiv, scriptSrc);
           }
         } else {
-          console.error("Error loading content:", xhr.statusText);
+          console.error(`⚠️ Error loading content from ${href}:`, xhr.status);
         }
       }
     };
 
     xhr.send();
   });
+
+  // Helper: Load external JS dynamically
+  function loadDynamicScript(src) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = src.startsWith("http") ? src : `./${src}`;
+      script.async = true;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.body.appendChild(script);
+    });
+  }
+
+  // Helper: Run inline <script> inside loaded content
+  function runInlineScript(contentDiv, scriptSrc) {
+    const inlineScript = contentDiv.querySelector("script");
+    if (inlineScript) {
+      try {
+        eval(inlineScript.textContent);
+      } catch (err) {
+        console.error(`💥 Error executing inline script in ${scriptSrc || href}:`, err);
+      }
+    }
+  }
 });
 
 
@@ -2221,6 +2235,7 @@ function openCustomOffcanvas(headercs, htmlcs) {
 
 
 // showBrowserNotification("Reminder", "CA exam study time!", "/icons/reminder.png");
+
 
 
 
