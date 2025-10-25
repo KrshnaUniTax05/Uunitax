@@ -1382,70 +1382,101 @@ function loadDynamicScript(src) {
         document.body.appendChild(script);
     });
 }
+
+
+
 document.addEventListener("DOMContentLoaded", function () {
-  const loadedScripts = new Set(); // Prevent duplicate loads
+  // Get all elements with class 'dynamic-content'
   const contentDivs = document.querySelectorAll(".dynamic-content");
 
-  contentDivs.forEach((contentDiv) => {
+  // Iterate over each div
+  contentDivs.forEach(function (contentDiv) {
     const href = contentDiv.getAttribute("data-href");
     const scriptSrc = contentDiv.getAttribute("data-script");
 
-    if (!href) return;
+    if (!href) return; // Skip if no data-href found
 
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", href, true);
+    // Function to load JS file dynamically
+    function loadDynamicScript(src) {
+      return new Promise((resolve, reject) => {
+        const existingScript = document.querySelector(`script[src="${src}"]`);
+        if (existingScript) return resolve(); // Skip if already loaded
 
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === XMLHttpRequest.DONE) {
-        if (xhr.status === 200) {
-          contentDiv.innerHTML = xhr.responseText;
-
-          // Load external script only if specified
-          if (scriptSrc && !loadedScripts.has(scriptSrc)) {
-            loadDynamicScript(scriptSrc)
-              .then(() => {
-                loadedScripts.add(scriptSrc);
-                runInlineScript(contentDiv, scriptSrc);
-              })
-              .catch((err) =>
-                console.error(`❌ Error loading script "${scriptSrc}":`, err)
-              );
-          } else {
-            runInlineScript(contentDiv, scriptSrc);
-          }
-        } else {
-          console.error(`⚠️ Error loading content from ${href}:`, xhr.status);
-        }
-      }
-    };
-
-    xhr.send();
-  });
-
-  // Helper: Load external JS dynamically
-  function loadDynamicScript(src) {
-    return new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      script.src = src.startsWith("http") ? src : `./${src}`;
-      script.async = true;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.body.appendChild(script);
-    });
-  }
-
-  // Helper: Run inline <script> inside loaded content
-  function runInlineScript(contentDiv, scriptSrc) {
-    const inlineScript = contentDiv.querySelector("script");
-    if (inlineScript) {
-      try {
-        eval(inlineScript.textContent);
-      } catch (err) {
-        console.error(`💥 Error executing inline script in ${scriptSrc || href}:`, err);
-      }
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = () => reject(`❌ Failed to load script: ${src}`);
+        document.body.appendChild(script);
+      });
     }
-  }
+
+    // Load content with fallback from both possible GitHub paths
+    function loadContent(primaryPath, fallbackPath) {
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", primaryPath, true);
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+            // ✅ Successfully loaded HTML
+            contentDiv.innerHTML = xhr.responseText;
+
+            // Load external script if defined
+            if (scriptSrc) {
+              loadDynamicScript(scriptSrc)
+                .then(() => {
+                  // Execute inline <script> inside loaded HTML (if any)
+                  const inlineScript = contentDiv.querySelector("script");
+                  if (inlineScript) {
+                    try {
+                      eval(inlineScript.textContent);
+                    } catch (e) {
+                      console.error(`⚠️ Error in inline script from ${href}:`, e);
+                    }
+                  }
+                })
+                .catch((err) => console.error(err));
+            }
+          } else if (xhr.status === 404) {
+            // 🔁 Try fallback path
+            console.warn(`⚠️ ${primaryPath} not found. Trying fallback: ${fallbackPath}`);
+            const fallbackXhr = new XMLHttpRequest();
+            fallbackXhr.open("GET", fallbackPath, true);
+            fallbackXhr.onreadystatechange = function () {
+              if (fallbackXhr.readyState === XMLHttpRequest.DONE) {
+                if (fallbackXhr.status === 200) {
+                  contentDiv.innerHTML = fallbackXhr.responseText;
+                } else {
+                  console.error(`❌ Both ${primaryPath} and ${fallbackPath} failed to load.`);
+                }
+              }
+            };
+            fallbackXhr.send();
+          } else {
+            console.error(`⚠️ Error loading ${primaryPath}: ${xhr.statusText}`);
+          }
+        }
+      };
+
+      xhr.send();
+    }
+
+    // Auto-detect path type for GitHub Pages
+    const isHostedOnGitHub = window.location.hostname.includes("github.io");
+
+    const basePath = isHostedOnGitHub
+      ? `${window.location.origin}/Uunitax/`
+      : "Uunitax/";
+
+    const fallbackPath = isHostedOnGitHub
+      ? `${window.location.origin}/Sections/`
+      : "Sections/";
+
+    // Try loading from both paths
+    loadContent(basePath + href, fallbackPath + href);
+  });
 });
+
 
 
 
@@ -2235,6 +2266,7 @@ function openCustomOffcanvas(headercs, htmlcs) {
 
 
 // showBrowserNotification("Reminder", "CA exam study time!", "/icons/reminder.png");
+
 
 
 
