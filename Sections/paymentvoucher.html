@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Receipt Voucher</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+  <div class="container">
+    <div class="card text-start">
+      <div class="card-header">
+        Payment Voucher
+      </div>
+      <div class="card-body">
+        <div id="status" class="mb-3"></div>
+        <form id="PaymentForm" class="tosendtransa receiptpayment" method="POST" autocomplete="off">
+          <div class="form-group row">
+            <label for="glAccount" class="col-sm-2 col-form-label">G/L Account:</label>
+            <input type="hidden" name="Transaction Behavior" value="Transaction">
+            <div class="col-sm-4">
+              <!-- <div class="form-group col-md-4"> -->
+                <!-- <label for="companyInput" class="form-label">Profit Center</label> -->
+                <input type="text" 
+                       class="form-control" list="GL_list"
+                     name="Credit Account" data-fetch_column data-sheet_name="LedgerCreation"
+                     data-column_name="name&ledgerCode&ledgerType{Cash-in-Hand+Bank Accounts}" required>
+        
+                <datalist id="GL_List">
+                  <!-- Options will be dynamically added here -->
+                </datalist>
+              <!-- </div  > -->
+            </div>
+            <label for="paymentRef" class="col-sm-2 col-form-label">Payment Ref:</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" id="paymentRef" name="paymentRef">
+            </div>
+          </div>
+          <input type="hidden" id="permanentText" name="documenttype" value="PAYMENT">
+          <div class="form-group row">
+            <label for="valueDate" class="col-sm-2 col-form-label">Value Date:</label>
+            <div class="col-sm-4">
+              <input type="date" class="form-control" id="valueDate" name="valueDate">
+            </div>
+            <label for="instrumentDate" class="col-sm-2 col-form-label">Instrument Date:</label>
+            <div class="col-sm-4">
+              <input type="date" class="form-control" id="instrumentDate" name="instrumentDate">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="project" class="col-sm-2 col-form-label">Project:</label>
+            <div class="col-sm-4">
+              <input type="text" 
+                       class="form-control" 
+                       list="profitcenter"
+                       name="Profit Center"     
+                       data-fetch_column 
+                       data-sheet_name="ProjectForm" 
+                       data-column_name="ProjectName&ProjectCode" 
+                       
+                       id="custoemrform_Project" required>
+        
+                <datalist id="profitcenter">
+                  <!-- Options will be dynamically added here -->
+                </datalist>
+            </div>
+            <label for="companycode" class="col-sm-2 col-form-label">Company Code:</label>
+            <div class="col-sm-4">
+              <input type="text" 
+                       class="form-control" 
+                       list="company list"
+                       name="Company Name"     
+                       data-fetch_column 
+                       data-sheet_name="companyForm" 
+                       data-column_name="companyName&CompanyCode" 
+                       
+                       id="custoemrform_Project" required>
+        
+                <datalist id="company list">
+                  <!-- Options will be dynamically added here -->
+                </datalist>
+            </div>
+          </div>
+          <!-- Table for credit entries -->
+          <div class="table-responsive table-sm">
+            <table class="table mt-4" id="creditEntryTableBody">
+              <thead>
+                <tr>
+                  <th>Sr. No</th>
+                  <th>Offsetting Account</th>
+                  <th>Amount</th>
+                  <th>Narration</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="ItemDataTableForReceiptPayment" class="form-table-body">
+                <tr class="credit-entry-row">
+                  <td>1</td>
+                  <td><input type="text" class="form-control" list="GL_List" data-fetch_column 
+                       data-sheet_name="LedgerCreation" 
+                       data-column_name="name&ledgerCode" name="Debit Account"></td>
+                  <td><input type="number" class="form-control amount" name="Amount" step="0.01"></td>
+                  <td><input type="text" class="form-control" name="Description" autocomplete="on"></td>
+                  <td><button type="button" class="btn btn-primary delete-row-button">Delete</button></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total:</td>
+                  <td id="totalAmount" class="text-end" colspan="3">0.00</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <!-- Buttons -->
+          <button type="button" class="btn btn-primary add-row-button" id="addRowButton">Add Row</button>
+          <button type="submit" class="btn btn-success" id="submitButton">
+            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+</body>
+</html>

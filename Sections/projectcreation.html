@@ -1,0 +1,43 @@
+<div class="card">
+    <div class="card-header text-start">
+      Create Projects
+    </div>
+    <div class="card-body text-start">
+      <form id="ProjectForm" class="tosend" onsubmit="return tellme()" name="Projects" method="post" autocomplete="off">
+        <!-- Error Alert -->
+        <div class="alert alert-danger error-alert" style="display: none;"></div>
+  
+        <!-- Project Name -->
+        <div class="mb-3">
+          <label for="ProjectCode" class="form-label">Project Code</label>
+          <input type="text" class="form-control uppercase-input" name="ProjectCode" id="ProjectCode" maxlength="6" minlength="6"   data-columnname_singlesearch="ProjectCode" oninput="debouncedFunction(event)" data-sheetName="ProjectForm" data-debounced="true"  required>
+        </div>
+        <div class="mb-3">
+          <label for="ProjectName" class="form-label">Project Name</label>
+          <input type="text" class="form-control propercase-input" name="ProjectName"  id="ProjectName" data-columnname_singlesearch="ProjectName" required>
+        </div>
+  
+        <!-- Company Name (Datalist) -->
+        <div class="mb-3">
+          <label for="companyInput" class="form-label">Company Name:</label>
+          <input type="text" 
+                 class="form-control" 
+                 list="companyList"
+                 name="Company_Name"     
+                 data-fetch_column 
+                 data-sheet_name="companyForm" 
+                 data-column_name="companyName&CompanyCode" 
+                 
+                 id="companyname_project" required>
+  
+          <datalist id="companyList">
+            <!-- Options will be dynamically added here -->
+          </datalist>
+        </div>
+  
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary w-100 submit">Create Company</button>
+      </form>
+    </div>
+  </div>
+  

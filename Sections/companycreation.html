@@ -1,0 +1,366 @@
+<div class="card">
+  <div class="card-header text-start">
+    Create New Company
+  </div>
+  <div class="card-body text-start">
+    <form id="companyForm" class="tosend" onload="tellme()" name="Companies" method="post" autocomplete="off">
+      <div class="alert alert-danger error-alert" style="display: none;"></div>
+  
+      <!-- Nav tabs -->
+      <div class="nav-tabs-wrapper">
+        <ul class="nav nav-tabs" id="companyTabs" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="personal-tab" data-toggle="tab" href="#personal" role="tab" aria-controls="personal" aria-selected="true">Personal Information</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="tax-tab" data-toggle="tab" href="#tax" role="tab" aria-controls="tax" aria-selected="false">Tax Information</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="bank-tab" data-toggle="tab" href="#bank" role="tab" aria-controls="bank" aria-selected="false">Bank Details</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="authority-tab" data-toggle="tab" href="#authority" role="tab" aria-controls="authority" aria-selected="false">Authorized Signatory</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="legal-tab" data-toggle="tab" href="#legal" role="tab" aria-controls="legal" aria-selected="false">Legal & Compliance</a>
+          </li>
+        </ul>
+      </div>
+  
+      <!-- Tab content -->
+      <div class="tab-content" id="companyTabsContent">
+        
+        <!-- Personal Information Tab -->
+        <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+          <!-- Company Code -->
+          <div class="row mb-3">
+              <div class="col-sm-4">
+                <label for="companycode" class="form-label">Company Code</label>
+                <input type="text" class="form-control" name="CompanyCode" id="companycode" 
+       maxlength="4" pattern="\d{4}" inputmode="numeric" required oninput="debouncedFunction(event)" data-debounced="true" data-columnname_singlesearch="CompanyCode" data-sheetName="companyForm"
+       oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4);">
+
+              </div>
+          </div>
+      
+          <!-- Company Name -->
+          <div class="row mb-3">
+            <div class="col-sm-12">
+              <label for="companyName" class="form-label">Company Name</label>
+              <input type="text" class="form-control" name="companyName" id="companyName" required>
+            </div>
+          </div>
+      
+          <!-- Company Address -->
+          <div class="row mb-3">
+            <div class="col-sm-12">
+              <label for="companyAddress1" class="form-label">Street Address</label>
+              <input type="text" class="form-control" name="companyAddress1" id="companyAddress1" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-12">
+              <label for="companyAddress2" class="form-label">City / Area</label>
+              <input type="text" class="form-control" name="companyAddress2" id="companyAddress2" required>
+            </div>
+          </div>
+      
+          <!-- State and Pin Code -->
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label for="Company_State" class="form-label">State</label>
+              <input type="text" class="form-control" list="state" name="Company_State" id="Company_State" required>
+            </div>
+            <div class="col-sm-6">
+              <label for="Company_Pin" class="form-label">Pin Code</label>
+              <input type="text" class="form-control" name="Company_Pin" id="Company_Pin" required>
+            </div>
+          </div>
+      
+          <!-- Contact Details (Phone & Email) -->
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label for="companyPhone" class="form-label">Phone Number</label>
+              <input type="text" class="form-control" name="companyPhone" id="companyPhone" pattern="\d{10}"  required>
+            </div>            
+            <div class="col-sm-6">
+              <label for="Email" class="form-label">Email Address</label>
+              <input type="email" class="form-control" name="Email" id="Email" required>
+            </div>
+          </div>
+          
+          <div class="row mb-3">
+            
+            <div class="col-sm-6">
+              <label for="Website" class="form-label">Website</label>
+              <input type="text" class="form-control" name="Website" id="Website" required>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Tax Information Tab -->
+        <div class="tab-pane fade" id="tax" role="tabpanel" aria-labelledby="tax-tab">
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label for="pan" class="form-label">PAN</label>
+              <input type="text" class="form-control" name="PAN" id="pan" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label for="gstin" class="form-label">GSTIN</label>
+              <input type="text" class="form-control" name="GSTIN" id="gstin" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label for="taxNumber" class="form-label">Tax Identification Number (TIN)</label>
+              <input type="text" class="form-control" name="TIN" id="taxNumber" value=" " >
+            </div>
+          </div>
+        </div>
+      
+        <!-- Bank Details Tab -->
+        <div class="tab-pane fade" id="bank" role="tabpanel" aria-labelledby="bank-tab">
+          <div class="row mb-3">
+            <div class="col-sm-12">
+              <label for="bankName" class="form-label">Bank Name</label>
+              <input type="text" class="form-control" name="bankName" id="bankName" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-6">
+              <label for="accountNumber" class="form-label">Account Number</label>
+              <input type="text" class="form-control" name="accountNumber" id="accountNumber" required>
+            </div>
+            <div class="col-sm-6">
+              <label for="ifscCode" class="form-label">IFSC Code</label>
+              <input type="text" class="form-control" name="ifscCode" id="ifscCode" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-12">
+              <label for="bankBranch" class="form-label">Bank Branch</label>
+              <input type="text" class="form-control" name="bankBranch" id="bankBranch" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-12">
+              <label for="Swift Code" class="form-label">Bank Swift Code</label>
+              <input type="text" class="form-control" name="Swift Code" id="Swift Code" >
+            </div>
+          </div>
+        </div>
+      
+        <!-- Authorized Signatory Tab -->
+        <div class="tab-pane fade" id="authority" role="tabpanel" aria-labelledby="authority-tab">
+          <div class="row mb-3">
+            <div class="col-sm-12">
+              <label for="signatoryName" class="form-label">Authorized Signatory Name</label>
+              <input type="text" class="form-control" name="signatoryName" id="signatoryName" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-12">
+              <label for="designation" class="form-label">Designation</label>
+              <input type="text" class="form-control" name="designation" id="designation" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-sm-12">
+              <label for="contactNumber" class="form-label">Contact Number</label>
+              <input type="tel" class="form-control" name="contactNumber" id="contactNumber" >
+            </div>
+          </div>
+        </div>
+      
+        <!-- Legal & Compliance Tab -->
+        <div class="tab-pane fade" id="legal" role="tabpanel" aria-labelledby="legal-tab">
+          <div class="row">
+            <div class="col-sm-12 mb-3">
+              <label for="companyLegalStatus" class="form-label">Legal Status of the Company</label>
+              <select class="form-select" name="companyLegalStatus" id="companyLegalStatus" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Private Limited">Private Limited</option>
+                <option value="Public Limited">Public Limited</option>
+                <option value="LLP">LLP</option>
+                <option value="Sole Proprietorship">Sole Proprietorship</option>
+              </select>
+            </div>
+        
+            <div class="col-sm-12 mb-3">
+              <label for="registrationNumber" class="form-label">Company Identification Number (CIN)</label>
+              <input type="text" class="form-control" name="registrationNumber" id="registrationNumber" required>
+            </div>
+        
+            <div class="col-sm-12 mb-3">
+              <label for="registrationOffice" class="form-label">Company Registration Office</label>
+              <div class="input-group">
+                <select class="form-select" id="registrationOfficeSelect" aria-label="Select registration office" required>
+                  <option value="" disabled selected>Select an option</option>
+                  <option value="ROC Delhi">ROC Delhi (NCT of Delhi & Haryana)</option>
+                  <option value="ROC Mumbai">ROC Mumbai (Maharashtra & Goa)</option>
+                  <option value="ROC Kolkata">ROC Kolkata (West Bengal, Sikkim, Arunachal Pradesh, Meghalaya, Manipur, Mizoram, Nagaland, and Tripura)</option>
+                  <option value="ROC Chennai">ROC Chennai (Tamil Nadu & Andaman and Nicobar Islands)</option>
+                  <option value="ROC Kanpur">ROC Kanpur (Uttar Pradesh)</option>
+                  <option value="ROC Ahmedabad">ROC Ahmedabad (Gujarat, Dadra and Nagar Haveli, and Daman and Diu)</option>
+                  <option value="ROC Hyderabad">ROC Hyderabad (Telangana & Andhra Pradesh)</option>
+                  <option value="ROC Jaipur">ROC Jaipur (Rajasthan)</option>
+                  <option value="ROC Bangalore">ROC Bangalore (Karnataka)</option>
+                  <option value="ROC Chandigarh">ROC Chandigarh (Punjab, Haryana, Himachal Pradesh, and Chandigarh)</option>
+                  <option value="ROC Shillong">ROC Shillong (Assam, Arunachal Pradesh, Manipur, Meghalaya, Mizoram, Nagaland, and Tripura)</option>
+                  <option value="ROC Ernakulam">ROC Ernakulam (Kerala & Lakshadweep)</option>
+                  <option value="ROC Bhopal">ROC Bhopal (Madhya Pradesh & Chhattisgarh)</option>
+                  <option value="ROC Cuttack">ROC Cuttack (Odisha)</option>
+                  <option value="ROC Ranchi">ROC Ranchi (Jharkhand & Bihar)</option>
+                  <option value="ROC Dehradun">ROC Dehradun (Uttarakhand)</option>
+                  <option value="ROC Guwahati">ROC Guwahati (Assam, Arunachal Pradesh, Manipur, Meghalaya, Mizoram, Nagaland, and Tripura)</option>
+                </select>
+              </div>
+            </div>
+        
+            <div class="col-sm-12 mb-3">
+              <label for="incorporationDate" class="form-label">Company Incorporation Date</label>
+              <input type="date" class="form-control" name="incorporationDate" id="incorporationDate" required>
+            </div>
+        
+            <div class="col-sm-12 mb-3">
+              <label for="taxClassification" class="form-label">Tax Classification</label>
+              <select class="form-select" name="taxClassification" id="taxClassification" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="Regular Taxpayer (GST Registered)">Regular Taxpayer (GST Registered)</option>
+                <!-- Add more options if needed -->
+              </select>
+            </div>
+        
+            <div class="col-sm-12 mb-3">
+              <label for="fssaiLicenseNumber" class="form-label">FSSAI License Number</label>
+              <input type="text" class="form-control" name="fssaiLicenseNumber" id="fssaiLicenseNumber" pattern="FSSAI-\d{10}" title="Please enter a valid FSSAI License Number (e.g., FSSAI-1234567890)" >
+            </div>
+        
+            <div class="col-sm-12 mb-3">
+              <label for="importExportCode" class="form-label">Import Export Code (IEC)</label>
+              <input type="text" class="form-control" name="importExportCode" id="importExportCode" pattern="\d{10}" title="Please enter a valid 10-digit IEC">
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Submit Button -->
+      <div class="row">
+        <div class="col-sm-12">
+          <button type="submit" class="btn btn-primary w-100">Create Company</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  
+  
+
+  
+  <style>
+    /* Align the form field text to the left */
+.form-control {
+  text-align: left;
+  border-radius: 0.25rem;
+  /* border: 1px solid #ced4da; */
+  font-size: 1rem;
+}
+
+/* Optional: Add some margin to make the form look neat */
+.mb-3 {
+  margin-bottom: 1.5rem;
+}
+
+/* Style for the submit button */
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  font-size: 1.1rem;
+  padding: 10px;
+}
+
+/* Submit button hover effect */
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+/* Add some space between the tabs and content */
+.nav-tabs {
+  margin-bottom: 20px;
+}
+
+.tab-content {
+  padding: 15px;
+}
+
+/* Add space between input fields */
+.form-control {
+  margin-bottom: 10px;
+}
+
+/* Styling for the disabled tab */
+.nav-link.disabled {
+  background-color: #f0f0f0 !important; /* Light grey background for disabled tab */
+  color: #aaa !important; /* Light grey text for disabled tab */
+  pointer-events: none; /* Disable interaction with the tab */
+  cursor: not-allowed; /* Change cursor to indicate disabled state */
+}
+
+/* Styling for active tab */
+.nav-link.active {
+  background-color: #007bff !important; /* Active tab background color */
+  color: white !important;
+}
+
+/* Optional: Styling for the default tab when not active */
+.nav-link {
+  color: #007bff !important; /* Tab text color */
+  background-color: white !important; /* Tab background color */
+  border-color: #ddd !important; /* Border color for tabs */
+}
+
+/* Change the tab color when hovered */
+.nav-link:hover {
+  background-color: #e0e0e0 !important; /* Hover color */
+}
+/* Add a wrapper to make the tabs scrollable horizontally */
+.nav-tabs-wrapper {
+  overflow-x: scroll; /* Enable horizontal scrolling */
+  flex-wrap: nowrap;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile devices */
+  /* padding-bottom: 10px; Optional: To add space between tabs and content */
+}
+
+.nav-tabs {
+  display: flex; /* Flexbox to align tabs horizontally */
+  flex-wrap: nowrap; /* Ensure the tabs are in a single row */
+  list-style-type: none; /* Remove default list styling */
+  padding-left: 0;
+  margin-bottom: 0; /* Remove default margin */
+}
+
+.ul{
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: nowrap;
+  flex-direction: column;
+}
+.nav-item {
+  flex-shrink: 0; /* Prevent items from shrinking */
+}
+
+/* Optional: Styling for better visual appearance of scrolling */
+.nav-link {
+  white-space: nowrap; /* Ensure tabs don't wrap */
+}
+
+/* Optional: Add border to the tab list container for clarity */
+.nav-tabs-wrapper {
+  border-bottom: 1px solid #ddd;
+}
+
+
+  </style>
+</div>

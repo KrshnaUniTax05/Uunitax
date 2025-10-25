@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sales Voucher</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+</head>
+<body>
+  <div class="">
+    <div class="card text-start">
+      <div class="card-header">Sale Voucher</div>
+      <div class="d-flex justify-content-between align-items-center mb-3 p-2 border-bottom bg-light rounded">
+      <div><strong>🛠️ Tools</strong></div>
+      <div>
+        <button type="button" class="btn btn-sm btn-secondary me-2" onclick="addadditonaldata(this)" title="Additional Details"><i class="fa fa-file-text-o" aria-hidden="true" ></i></button>
+        <button type="button" class="btn btn-sm btn-info me-2" onclick="">Set Project </button>
+        <button type="button" class="btn btn-sm btn-outline-primary">Save Draft</button>
+      </div>
+      </div>  
+      <div class="card-body">
+        <div id="status" class="mb-3"></div>
+        <form id="SalesForm" class="tosendtransa" method="POST" autocomplete="off">
+          <!-- Input rows (unchanged) -->
+                    <div class="form-group row">
+            <label class="col-sm-2 col-form-label">G/L Account:</label>
+            <input type="hidden" name="Transaction Behavior" value="Transaction" />
+            <div class="col-sm-4">
+              <input type="text" class="form-control" list="GL_list"
+                     name="GL" data-fetch_column data-sheet_name="LedgerCreation"
+                     data-column_name="name&ledgerCode&ledgerType{Cash-in-Hand+Sundry Creditors+Sundry Debtors}" required>
+                     <!-- ledgerCode&name&ledgerType{cash+Sundry Creditor} -->
+              <datalist id="GL_list"></datalist>
+            </div>
+            <label for="Invoice" class="col-sm-2 col-form-label">Invoice No:</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" id="Invoice" name="Invoice" readonly />
+            </div>
+          </div>
+
+          <input type="hidden" name="documentType" value="SALES"/>
+
+          <div class="form-group row">
+            <label for="InvoiceDate" class="col-sm-2 col-form-label">Invoice Date:</label>
+            <div class="col-sm-4">
+              <input type="date" class="form-control" id="InvoiceDate" name="InvoiceDate" />
+            </div>
+            <label for="OrderDate" class="col-sm-2 col-form-label">Order Date:</label>
+            <div class="col-sm-4">
+              <input type="date" class="form-control" id="OrderDate" name="OrderDate" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Project:</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" list="profitcenter"
+                     name="Profit Center" data-fetch_column data-sheet_name="ProjectForm"
+                     data-column_name="ProjectName&ProjectCode" required>
+              <datalist id="profitcenter"></datalist>
+            </div>
+            <label class="col-sm-2 col-form-label">Company Code:</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" list="company_list"
+                     name="Company Name" data-fetch_column data-sheet_name="companyForm"
+                     data-column_name="companyName&CompanyCode"  required>
+              <datalist id="company_list"></datalist>
+            </div>
+          </div>
+          <!-- Table for credit entries -->
+          <div class="table-responsive text-start">
+            <table class="table mt-4" id="ItemTable creditEntryTableBody">
+              
+              <thead>
+                <tr>
+                  <th>Sr No.</th>
+                  <th>Item name</th>
+                  <th>Quantity</th>
+                  <th>Rate</th>
+                  <th>Amount</th>
+                  <th>Narration</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="ItemDataTable" >
+                <tr class="credit-entry-row">
+                  <td class="sr-no">1</td>
+                  <td>
+                    <input type="text" class="form-control itemName" list="stocklist"
+                           name="itemName" data-fetch_column data-sheet_name="Stock"
+                           data-column_name="Document Number&itemName"   required>
+                    <datalist id="stocklist"></datalist>
+                  </td>
+                  <td><input type="number" class="form-control quantity" name="Quantity" step="0.001"></td>
+                  <td><input type="number" class="form-control rate" name="Rate" step="0.001"></td>
+                  <input type="hidden" name="ItemDocumentNumber">
+                  <input type="hidden" name="Description">
+                  <input type="hidden" name="ItemUnit">
+                  <input type="hidden" name="itemGroup">
+                  <input type="hidden" name="itemHSN">
+                  <input type="hidden" name="ItemTax">
+                  <input type="hidden" name="ItemCode">
+                  <td><input type="text" style="text-align: right;" class="form-control amount" name="Amount" readonly></td>
+                  <td><input type="text" class="form-control" name="narration"></td>
+                  <td><button type="button" class="btn btn-primary delete-row-button">Delete</button></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td>Total:</td>
+                  <td id="totalAmountsales" class="text-end" colspan="5">0.00</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div class="" id="tax-summary-working"></div>
+          <!-- Buttons -->
+          <button type="button" class="btn btn-primary add-row-button" id="addNewRowButton">Add Row</button>
+          <button type="submit" class="btn btn-success" id="submitButton">
+            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+
+
+    function updateTotal() {
+  let total = 0;
+  document.querySelectorAll("#ItemDataTable .amount").forEach(input => {
+    const val = input.value.replace(/,/g, '');  // Remove commas if any
+    total += parseFloat(val) || 0;
+  });
+  document.getElementById("totalAmountsales").textContent = formatNumberIndian(total);
+}
+
+    function updateSerials() {
+      document.querySelectorAll('#ItemDataTable .sr-no').forEach((td, idx) => {
+        td.textContent = idx + 1;
+      });
+    }
+
+    function formatDecimal(input) {
+      const val = parseFloat(input.value);
+      input.value = isNaN(val) ? '' : val.toFixed(2);
+    }
+
+    document.getElementById("ItemDataTable").addEventListener("input", function (e) {
+      const row = e.target.closest("tr");
+      const rate = parseFloat(row.querySelector(".rate")?.value) || 0;
+      const qty = parseFloat(row.querySelector(".quantity")?.value) || 0;
+      const amount = (rate * qty).toFixed(2);
+      row.querySelector(".amount").value = formatNumberIndian(amount);
+      updateTotal();
+    });
+
+    function formatNumberIndian(value) {
+      const num = parseFloat(value);
+      return isNaN(num) ? '' : num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    document.getElementById("ItemDataTable").addEventListener("blur", function (e) {
+      if (e.target.classList.contains("rate") || e.target.classList.contains("quantity")) {
+        formatDecimal(e.target);
+      }
+    }, true);
+
+    // document.getElementById("addNewRowButton").addEventListener("click", function () {
+    //   const table = document.getElementById("ItemDataTable");
+    //   const newRow = table.rows[0].cloneNode(true);
+    //   newRow.querySelectorAll("input").forEach(input => {
+    //     input.value = "";
+    //     if (input.name === "Amount") input.readOnly = true;
+    //   });
+    //   table.appendChild(newRow);
+    //   updateSerials();
+    // });
+
+    // document.getElementById("ItemDataTable").addEventListener("click", function (e) {
+    //   if (e.target.classList.contains("delete-row-button")) {
+    //     const rows = document.querySelectorAll("#ItemDataTable tr");
+    //     if (rows.length > 1) {
+    //       e.target.closest("tr").remove();
+    //       updateSerials();
+    //       updateTotal();
+    //     } else {
+    //       alert("At least one row is required.");
+    //     }
+    //   }
+    // });
+   
+
+    // 1. Fetch item name list for datalist
+// function loadItemNames() {
+//   const scriptURL = 'https://script.google.com/macros/s/AKfycbzI1bZCsUHC68RhNeYPMylYMchUnb6XBP5WwcFX-XdKP1Fg-ZhmiPfCSWkuDa45yT9q/exec';
+//   const sheetName = 'Stock';
+//   const columnName = 'Item Name';
+
+//   const url = `${scriptURL}?action=getColumnData&sheet_name=${sheetName}&column_name=${columnName}&field_id=itemList&callback=handleItemList`;
+//   console.log(url)
+
+//   const script = document.createElement("script");
+//   script.src = url;
+//   document.body.appendChild(script);
+// }
+
+// // Callback function for getColumnData
+// function handleItemList(response) {
+//   const datalist = document.getElementById("itemList");
+//   datalist.innerHTML = ""; // clear old items
+
+//   response.column_values.forEach(item => {
+//     const option = document.createElement("option");
+//     option.value = item;
+//     datalist.appendChild(option);
+//   });
+// }
+
+    // Init
+    // invoicegen();
+    // setTodayDate();
+    updateSerials();
+    // alert('hi')
+  </script>
+
+  <!-- External Libraries -->
+  <script src="https://code.jquery.com/jquery-3 .5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

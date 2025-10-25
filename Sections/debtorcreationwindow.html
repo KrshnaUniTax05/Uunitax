@@ -1,0 +1,67 @@
+
+    <div class="container mt-4">
+        <div class="card text-start">
+            <h5 class="card-header">Customer Creation</h5>
+            <div class="card-body">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="information-tab" data-toggle="tab" href="#information" role="tab" aria-controls="information" aria-selected="true">Information</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="banking-tab" data-toggle="tab" href="#banking" role="tab" aria-controls="banking" aria-selected="false">Banking</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="definition-tab" data-toggle="tab" href="#definition" role="tab" aria-controls="definition" aria-selected="false">Definition</a>
+                    </li>
+                </ul>
+                <div class="tab-content my-3  " id="myTabContent">
+                    <div class="tab-pane fade show active" id="information" role="tabpanel" aria-labelledby="information-tab">
+                        <!-- Customer Information form -->
+                        <fieldset>
+                            <legend>Customer Information</legend>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="customerfName">First Name</label>
+                                    <input type="text" class="form-control" id="customerfName" placeholder="Enter customer name">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="customermName">Middle Name</label>
+                                    <input type="text" class="form-control" id="customermName" placeholder="Enter customer name">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="customerlName">Last Name</label>
+                                    <input type="text" class="form-control" id="customerlName" placeholder="Enter customer name">
+                                </div>
+                            </div>
+                            <!-- Add more customer information fields as needed -->
+                        </fieldset>
+                    </div>
+                    <div class="tab-pane fade" id="banking" role="tabpanel" aria-labelledby="banking-tab">
+                        <!-- Banking information form -->
+                        <fieldset>
+                            <legend>Banking Information</legend>
+                            <!-- Add banking information fields as needed -->
+                        </fieldset>
+                    </div>
+                    <div class="tab-pane fade" id="definition" role="tabpanel" aria-labelledby="definition-tab">
+                        <!-- Customer definition form -->
+                        <fieldset>
+                            <legend>Customer Definition</legend>
+                            <!-- Add customer definition fields as needed -->
+                            <div class="form-group">
+                                <label for="company">Company</label>
+                                <input type="text" class="form-control" id="company" placeholder="Enter company name">
+                            </div>
+                            <div class="form-group">
+                                <label for="project">Project</label>
+                                <input type="text" class="form-control" id="project" placeholder="Enter project name">
+                            </div>
+                            <!-- Add more definition fields as needed -->
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+

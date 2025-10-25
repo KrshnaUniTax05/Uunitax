@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Professional Ledger Layout</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        Ledger Creation
+      </div>
+      <div class="card-body">
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs mb-4" id="ledgerTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button"
+              role="tab">Basic Information</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tax-tab" data-bs-toggle="tab" data-bs-target="#tax" type="button" role="tab">Tax
+              Details</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="additional-tab" data-bs-toggle="tab" data-bs-target="#additional" type="button"
+              role="tab">Additional Details</button>
+          </li>
+        </ul>
+
+        <!-- Tabs Content -->
+         <form  id="Ledger Creation" class="tosend" name="Ledger Creation" method="post">
+          <div class="tab-content text-start">
+          <!-- Basic Information Tab -->
+            <div class="tab-pane fade show active" id="basic" role="tabpanel">
+              <h5 class="my-4">Ledger Details</h5>
+              <div class="row m-3">
+                <div class="col-sm-3">
+                  <label for="ledger_code" name="Ledger Code" class="form-label">Ledger Code</label>
+                </div>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control" id="ledger_code" name="Code" placeholder="" minlength="8" maxlength="8">
+                </div>
+              </div>
+              <div class="row m-3">
+                <div class="col-sm-3">
+                  <label for="ledger_name" class="form-label">Name</label>
+                </div>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control" id="ledger_name" name="Name" placeholder="">
+                </div>
+              </div>
+              <div class="row m-3">
+                <div class="col-sm-3">
+                  <label for="Ledger type" class="form-label">Ledger Type:</label>
+                </div>
+                <div class="col-sm-6">
+                  <select name="Ledger Type" id="Ledger type">
+                    <option value="assets">Assets</option>
+                    <option value="liability">Liability</option>
+                    <option value="Income">Income</option>
+                    <option value="Capital">Capital</option>
+                    <option value="Expenses">Expenses</option>
+                  </select>
+                </div>
+              </div>
+              <h5 class="my-4">Address Details</h5>
+              <div class="row m-3">
+                <div class="col-sm-3">
+                  <label for="Ledger_Address1" class="form-label">Address Line 1</label>
+                </div>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control" id="Ledger_Address1" name="Address 1" placeholder="">
+                </div>
+              </div>
+              <div class="row m-3">
+                <div class="col-sm-3">
+                  <label for="Ledger_Address2" class="form-label">Address Line 2</label>
+                </div>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control" id="Ledger_Address1" name="Address 2"  placeholder="">
+                </div>
+              </div>
+              <div class="row m-3">
+                <div class="col-sm-3">
+                  <label for="Ledger_City" class="form-label">City</label>
+                </div>
+                <div class="col-sm-3">
+                  <input type="text" class="form-control" id="Ledger_City" name="City" placeholder="">
+                </div>
+              
+                <div class="col-sm-2">
+                  <label for="ledger_pincode" class="form-label">Pin Code</label>
+                </div>
+                <div class="col-sm-3">
+                  <input type="text" class="form-control" id="ledger_pincode" name="PinCode" placeholder="">
+                </div>
+              </div>
+              <h5 class="my-4">Other Details</h5>
+              <div class="row m-3">
+                <div class="col-sm-3">
+                  <label for="Ledger_costcenterenabaled" class="form-label">Is Cost Center Allowed</label>
+                </div>
+                <div class="col-sm-6">
+                  <select id="Ledger_costcenterenabaled" name="Cost Center Allowed" >
+                    <option value="Yes">Yes</option>
+                    <option value="No" selected>No</option>
+                  </select>  
+                </div>
+              </div>  
+            </div>
+
+          <!-- Tax Details Tab -->
+          <div class="tab-pane fade" id="tax" role="tabpanel">
+            <div class="row m-3">
+              <div class="col-sm-3">
+                <label for="ledger_PAN" class="form-label">Pan Number</label>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" id="ledger_PAN" name="PAN" placeholder="">
+              </div>
+            </div>
+            <div class="row m-3">
+              <div class="col-sm-3">
+                <label for="name" class="form-label">GST Number</label>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" id="ledger_GST" name="GST" placeholder="">
+              </div>
+            </div>
+            <div class="row m-3">
+              <div class="col-sm-3">
+                <label for="ledger_TAN" class="form-label">TAN Number</label>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" id="ledger_TAN" name="TAN" placeholder="">
+              </div>
+            </div>
+            <div class="row m-3">
+              <div class="col-sm-3">
+                <label for="Ledger_TaxCode" class="form-label">Assign Tax</label>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" style="width: 50px;" class="form-control" id="Ledger_TaxCode" name="Tax Code" placeholder="">
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Details Tab -->
+          <div class="tab-pane fade" id="additional" role="tabpanel">
+            <div class="row m-3">
+              <div class="col-sm-3">
+                <label for="name" class="form-label">Notes</label>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" id="name" placeholder="">
+              </div>
+            </div>
+          </div>
+          </div>
+          
+          <!-- Submit Button -->
+          <div class="text-end mt-4">
+            <button type="submit" class="btn btn-primary">Create Ledger</button>
+          </div>
+        </form>
+        </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Optional: Add form submission logic or validations
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Invoice</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* --- Screen/Default Styles --- */
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans&display=swap');
+
+        body {
+            /* Set a standard font size for better print consistency */
+            font-size: 10pt; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+
+        }
+        .invoice-title {
+            text-align: left;
+            margin: 20px 0;
+        }
+        .section {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        /* Reduce line height for detail blocks except Invoice Info */
+        .section:not(.Invoice-info) p, .section:not(.Invoice-info) h6 {
+            line-height: 1.2; 
+            margin-bottom: 5px; /* Adjust spacing */
+        }
+        .section h5 {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 6px; /* Reduced padding for compact look */
+        }
+        .total-row td {
+            font-weight: bold;
+        }
+        .qr-code {
+            max-width: 150px;
+            height: auto;
+        }
+        .copy .row {
+             /* Use flex for the copy checkboxes to prevent wrapping */
+             display: flex;
+             align-items: center;
+             margin: 0;
+        }
+        .copy .col-2 {
+            border: 1px solid #2a2a2a !important;
+        }
+        .copy .col-10 {
+            padding-left: 5px;
+        }
+        
+        
+        /* --- PRINT-SPECIFIC STYLES --- */
+        @media print {
+            /* 1. Reset Core Page Layout */
+            body {
+                margin: 0;
+                padding: 0;
+                font-size: 13pt; 
+                /* Ensures text doesn't flow off the page */
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+        
+            .container {
+                border: none !important; /* Remove the outer border on print */
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100%; /* Ensure full width usage */
+                max-width: 100%;
+            }
+            
+            /* 2. Fix Bootstrap Column Widths */
+            .row {
+                /* Prevents negative margins from row */
+                margin-left: 0; 
+                margin-right: 0;
+            }
+            .col-md-6, .col-lg-9, .col-lg-3, .col-5, .col-7, .col-12, .col-8, .col-4 {
+                /* Important: Force column widths using static percentages */
+                float: left;
+                padding-left: 10px;
+                
+                padding-right: 10px;
+            }
+            .col-md-6{
+              border: none !important;
+            }
+
+            .col-md-6 { width: 50%; }
+            .col-lg-9 { width: 75%; }
+            .col-lg-3 { width: 25%; }
+            .col-12 { width: 100%; }
+            .col-8 { width: 66.666%; }
+            .col-4 { width: 33.333%; }
+            .col-5 { width: 41.666%; }
+            .col-7 { width: 58.333%; }
+            .col-2 { width: 16.666%; }
+            .col-10 { width: 83.333%; }
+            
+            /* 3. Style Adjustments */
+            .invoice-title {
+                margin: 10px 0;
+            }
+            .section {
+                padding: 5px;
+                margin-bottom: 10px;
+                line-height: 1.2; 
+            }
+            .table {
+                /* Prevent table borders from disappearing */
+                border-collapse: collapse !important; 
+            }
+            .table th, .table td {
+                /* Reset table padding and ensure borders are black */
+                border: 1px solid #000 !important;
+                padding: 4px;
+            }
+            .copy .col-2 {
+                /* Ensure checkboxes are square and solid */
+                border: 1px solid #000 !important;
+                height: 12px;
+                width: 12px;
+                margin: 2px 5px !important;
+                padding: 0 !important;
+            }
+            
+            /* 4. Hide/Adjust Specific Elements */
+            .qr-code {
+                max-width: 80px; /* Make QR code smaller if needed */
+            }
+            /* Ensure the signature block sits at the bottom */
+             .align-end {
+                float: right;
+             }
+            
+            /* Add page break control for large tables/documents */
+            table {
+                page-break-inside: auto;
+                background-color: #a6a6a6;
+            }
+            th{
+
+            }
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            thead {
+                display: table-header-group;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container p-4 mt-3 mb-5">
+    
+        <div class="row header_1">
+            <div class="col-lg-9 copy text-start">
+                <h2 class="invoice-title">TAX INVOICE</h2>
+            </div>
+            <div class="col-lg-3 text-end copy">
+                <div class="row">
+                    <div class="col-2 p-2 my-1 border"></div>
+                    <div class="col-10">Original Copy</div>
+                </div>
+                <div class="row">
+                    <div class="col-2 p-2 my-1 border"></div>
+                    <div class="col-10">Supplier Copy</div>
+                </div>
+                <div class="row">
+                    <div class="col-2 p-2 my-1 border"></div>
+                    <div class="col-10">Transporter Copy</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 section ">
+                <h5>Seller Details</h5>
+                <h6><strong> Krishna Enterprises</strong></h6>
+                <p><strong>Address:</strong> 123, Industrial Area, Delhi - 110059</p>
+                <p><strong>GSTIN:</strong> 07ABCDE1234F1Z5</p>
+                <p><strong>Mobile:</strong> 8076277831</p>
+                <p><strong>Email:</strong> sales@krishnaent.com</p>
+            </div>
+            <div class="col-md-6 section ">
+                <h5>Buyer Details</h5>
+                <h6><strong>M/s ABC Pvt. Ltd.</strong> </h6>
+                <p><strong>Address:</strong> 456, Business Park, Noida - 201301</p>
+                <p><strong>GSTIN:</strong> 09ABCXY7890K2Z7</p>
+                <p><strong>Mobile:</strong> 8076277831</p>
+                <p><strong>Email:</strong> purchase@abc.com</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 section ">
+                <h5>Consignee Details</h5>
+                <h6><strong>ABC Pvt. Ltd. - Warehouse</strong></h6>
+                <p><strong>Address:</strong> Plot 789, Logistics Hub, Ghaziabad - 201002</p>
+                <p><strong>GSTIN:</strong> 09ABCXY7890K2Z7</p>
+                <p><strong>Contact:</strong> +91 99999 99999</p>
+            </div>
+            <div class="col-md-6 section  Invoice-info">
+                <h5>Invoice Info</h5>
+                <div class="row">
+                    <div class="col-5 font-weight-bold">Invoice No:</div>
+                    <div class="col-7">INV/2025/001</div>
+                </div>
+                <div class="row">
+                    <div class="col-5 font-weight-bold">Date:</div>
+                    <div class="col-7">05 May 2025</div>
+                </div>
+                <div class="row">
+                    <div class="col-5 font-weight-bold">E-way Bill:</div>
+                    <div class="col-7">EWB123456789</div>
+                </div>
+                <div class="row">
+                    <div class="col-5 font-weight-bold">AWB No:</div>
+                    <div class="col-7">AWB778899</div>
+                </div>
+                <div class="row">
+                    <div class="col-5 font-weight-bold">Payment Mode:</div>
+                    <div class="col-7">Online</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <!-- <h5 class="mb-3"><u>Items</u></h5> -->
+                <table class="table table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Description</th>
+                            <th>HSN</th>
+                            <th>Qty</th>
+                            <th>Rate</th>
+                            <th>Tax (%)</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Product A</td>
+                            <td>1001</td>
+                            <td>5</td>
+                            <td>₹200</td>
+                            <td>5%</td>
+                            <td>₹1,050</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td colspan="6" class="text-right">Total</td>
+                            <td >₹1,050</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 section ">
+                <h5>Transporter Details</h5>
+                <div class="row">
+                    <div class="col-5 font-weight-bold">Transporter Name:</div>
+                    <div class="col-7">FastMove Logistics</div>
+                </div>
+                <div class="row">
+                    <div class="col-5 font-weight-bold">Vehicle No:</div>
+                    <div class="col-7">DL01AB1234</div>
+                </div>
+                <div class="row">
+                    <div class="col-5 font-weight-bold">LR No:</div>
+                    <div class="col-7">1122334455</div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-12">
+                        <h5><u>Tax Summary</u></h5>
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Rate</th>
+                                    <th>Taxable Value</th>
+                                    <th>CGST</th>
+                                    <th>SGST</th>
+                                    <th>IGST</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>0%</td>
+                                    <td>500000</td>
+                                    <td>5000</td>
+                                    <td>5000</td>
+                                    <td>₹1,000</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td colspan="4" class="text-right">Total Tax</td>
+                                    <td>₹1,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 ">
+                <div class="row">
+                    <div class="col-md-7 align-center section">
+                        <h5>Bank Details</h5>
+                        <div class="row">
+                            <div class="col-5 font-weight-bold">Bank Name:</div>
+                            <div class="col-7">State Bank of India</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-5 font-weight-bold">Account No:</div>
+                            <div class="col-7">9876543210</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-5 font-weight-bold">IFSC/Swift Code:</div>
+                            <div class="col-7">SBIN0001234</div>
+                        </div>
+                    </div>
+                    <div class="col-md-5 section text-center ">
+                        <h5>Scan to Pay</h5>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=8076277831@ybl&pn=Krishna%20Enterprises&am=1000" class="qr-code" alt="QR Code">
+                        <p class="mt-2"><strong>Amount:</strong> ₹1,000</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row border-top">
+            <div class="col-8 section">
+                <h5>Important Instructions</h5>
+                <ul class="mb-0">
+                    <li>Payment due within <strong>15 days</strong> from the date of invoice.</li>
+                    <li>Late payment will attract interest at <strong>2% per month</strong> on the outstanding amount.</li>
+                    <li>Goods once sold will not be taken back or exchanged.</li>
+                    <li>All disputes are subject to Delhi jurisdiction only.</li>
+                    <li>Please verify goods at the time of delivery. No claims will be entertained afterward.</li>
+                    <li>Make payments via UPI, NEFT, or cheque in favor of <strong>Krishna Enterprises</strong>.</li>
+                </ul>
+            </div>
+            <div class="col-4 text-center section">
+                <div class="p-4" style="min-height: 120px;">
+                    <p class="mb-5"><strong>Authorized Signatory / Stamp</strong></p>
+                    <p>Krishna</p>
+                    <div style="border-top: 1px solid #000; width: 80%; margin: 0 auto;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col text-center">
+                <p><em>This is a system-generated invoice and does not require a signature.</em></p>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Invoice / Order Form</title>
+<style>
+  body {
+    background: #f6f8fa;
+    margin: 0;
+    padding: 20px;  
+  }
+  .form-container {
+    max-width: 1000px;
+    margin: auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px 35px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  h2 {
+    text-align: left;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #333;
+  }
+  fieldset {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    padding: 20px;
+  }
+  legend {
+    font-weight: 600;
+    padding: 0 10px;
+    color: #444;
+  }
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 15px;
+  }
+  .form-group {
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    flex-direction: column;
+  }
+  label {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #555;
+  }
+  input, select, textarea {
+    padding: 4px;
+    border: 1px solid #d1d5db;
+    /* border-radius: 6px; */
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: #2563eb;
+    outline: none;
+  }
+  textarea {
+    resize: vertical;
+  }
+  .form-actions {
+    text-align: right;
+    margin-top: 20px;
+  }
+  button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    margin-left: 10px;
+    /* transition: background 0.2s; */
+  }
+  .btn-primary {
+    background: #2563eb;
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: #1d4ed8;
+  }
+  .btn-secondary {
+    background: #e5e7eb;
+    color: #333;
+  }
+  .btn-secondary:hover {
+    background: #d1d5db;
+  }
+</style>
+</head>
+<body>
+
+<div class="form-container">
+  <h2>Additional Details</h2>
+  <form id="Additional_Data">
+
+    <!-- CONSIGNEE / CUSTOMER DETAILS -->
+    <fieldset>
+      <legend>Consignee / Customer Details</legend>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Customer / Consignee Name</label>
+          <input type="text" name="consignee_name" required minlength="3" maxlength="100">
+        </div>
+        <div class="form-group">
+          <label>Billing Address</label>
+          <input type="text" name="billing_address" required maxlength="200">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>State</label>
+          <input type="text" name="state" required maxlength="50">
+        </div>
+        <div class="form-group">
+          <label>Pin Code</label>
+          <input type="text" name="pincode" pattern="\d{6}" placeholder="6 digit code">
+        </div>
+        <div class="form-group">
+          <label>Mobile No.</label>
+          <input type="tel" name="mobile" pattern="[6-9]\d{9}" placeholder="10 digit number">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>PAN</label>
+          <input type="text" name="pan" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" placeholder="ABCDE1234F">
+        </div>
+        <div class="form-group">
+          <label>CIN</label>
+          <input type="text" name="cin" maxlength="21" placeholder="Corporate Identity No.">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- DOCUMENT DETAILS -->
+    <fieldset>
+      <legend>Document Details</legend>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Invoice No.</label>
+          <input type="text" name="invoice_no" required maxlength="20">
+        </div>
+        <div class="form-group">
+          <label>Invoice Date</label>
+          <input type="date" name="invoice_date" required>
+        </div>
+        <div class="form-group">
+          <label>Order No.</label>
+          <input type="text" name="order_no" maxlength="20">
+        </div>
+        <div class="form-group">
+          <label>Order Date</label>
+          <input type="date" name="order_date">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Reference Document</label>
+          <input type="text" name="reference_doc" maxlength="50">
+        </div>
+        <div class="form-group">
+          <label>Remarks / Notes</label>
+          <textarea name="remarks" rows="2"></textarea>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- PAYMENT DETAILS -->
+    <fieldset>
+      <legend>Payment Information</legend>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Payment Mode</label>
+          <select name="payment_mode" required>
+            <option value="">-- Select --</option>
+            <option>Cash</option>
+            <option>Cheque</option>
+            <option>Bank Transfer</option>
+            <option>UPI</option>
+            <option>Credit</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Payment Terms</label>
+          <input type="text" name="payment_terms" placeholder="Net 30 days">
+        </div>
+        <div class="form-group">
+          <label>Interest Rate on Late Payment (%)</label>
+          <input type="number" name="interest_rate" step="0.01" min="0" max="100" placeholder="e.g. 18%">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Bank Name</label>
+          <input type="text" name="bank_name">
+        </div>
+        <div class="form-group">
+          <label>Account No.</label>
+          <input type="text" name="bank_account" pattern="\d{9,18}">
+        </div>
+        <div class="form-group">
+          <label>IFSC Code</label>
+          <input type="text" name="ifsc" pattern="^[A-Z]{4}0[A-Z0-9]{6}$">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>SWIFT Code</label>
+          <input type="text" name="swift" maxlength="11">
+        </div>
+        <div class="form-group">
+          <label>UPI ID</label>
+          <input type="text" name="upi" placeholder="example@upi">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- TRANSPORT / LOGISTICS -->
+    <fieldset>
+      <legend>Transport & Logistics</legend>
+      <div class="form-row">
+        <div class="form-group">
+          <label>AWB No.</label>
+          <input type="text" name="awb_no" maxlength="20">
+        </div>
+        <div class="form-group">
+          <label>LR No.</label>
+          <input type="text" name="lr_no" maxlength="20">
+        </div>
+        <div class="form-group">
+          <label>Mode of Transport</label>
+          <select name="transport_mode">
+            <option value="">-- Select --</option>
+            <option>Road</option>
+            <option>Rail</option>
+            <option>Air</option>
+            <option>Sea</option>
+            <option>Courier</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Vehicle No.</label>
+          <input type="text" name="vehicle_no" pattern="^[A-Z]{2}[0-9]{1,2}[A-Z]{1,2}[0-9]{4}$" placeholder="e.g. MH12AB1234">
+        </div>
+        <div class="form-group">
+          <label>Transporter Name</label>
+          <input type="text" name="transporter_name">
+        </div>
+        <div class="form-group">
+          <label>Transporter Contact</label>
+          <input type="text" name="transporter_contact">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- ATTACHMENTS -->
+    <fieldset>
+      <legend>Attachments</legend>
+      <div class="form-group">
+        <label>Upload Supporting Documents</label>
+        <input type="file" name="attachments" multiple>
+      </div>
+    </fieldset>
+
+    <!-- SUBMIT -->
+    <div class="form-actions">
+      <button type="reset" class="btn-primary" onclick="getsubjectiveform()">Add</button>
+      <!-- <button type="submit" class="btn-primary">Submit Invoice</button> -->
+    </div>
+  </form>
+</div>
+
+<script>
+  function collectFormData() {
+  const form = document.getElementById("Additional_Data");
+  const elements = form.querySelectorAll("input, select, textarea");
+  const filledData = {};
+
+  elements.forEach(el => {
+    const value = el.value?.trim();
+    if (value) {
+      filledData[el.name || el.id] = value;
+    }
+  });
+
+  // ✅ Call your function with collected data
+  console.log(filledData)
+  return
+  getsubjectiveform(filledData);
+}
+
+// Attach to Add button
+document.querySelector("#Additional_Data .btn-primary").addEventListener("click", function (e) {
+  e.preventDefault(); // prevent form reset/submit
+  collectFormData();
+});
+
+function addadditonaldata(element) {
+    if (!element) return;
+
+    // Find the closest .card ancestor
+    const card = element.closest(".card");
+    if (!card) {
+        console.warn("⚠️ No .card found for this element", element);
+        return;
+    }
+
+    // Inside the .card, find the .card-body
+    const cardBody = card.querySelector(".card-body");
+    if (!cardBody) {
+        console.warn("⚠️ No .card-body found inside this .card", card);
+        return;
+    }
+
+    // Inside .card-body, find the form
+    const form = cardBody.querySelector("form");
+    if (!form) {
+        console.warn("⚠️ No form found inside .card-body", cardBody);
+        return;
+    }
+
+    console.log("[DEBUG] Form found:", form);
+  
+
+
+}
+
+</script>
+
+
+
+</body>
+</html>

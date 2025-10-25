@@ -1,0 +1,94 @@
+<div class="card">
+    <div class="card-header">Transaction Register</div>
+    <div class="d-flex justify-content-between align-items-center  p-2 border-bottom bg-light rounded">
+      <div><strong>🛠️ Tools</strong></div>
+      <div>
+        <!-- list here -->
+      </div>
+    </div>  
+    <div class="card-body text-start">
+        <form action="#" onsubmit="findregister(event)" id="showtransaction">
+            <fieldset class="border rounded p-1">
+                <legend class="float-none w-auto px-2 ">GL Details</legend>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="searchvoucher">Voucher Name:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="list" class="form-control" id="searchvoucher" list="voucherList">
+                        <datalist id="voucherList">
+                            <option value="Purchase Voucher"></option>
+                            <option value="Sales Voucher"></option>
+                            <option value="Payment Voucher"></option>
+                            <option value="Receipt Voucher"></option>
+                            <option value="Journal Voucher"></option>
+                        </datalist>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="searchvoucher">Period:</label>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" class="form-control" placeholder="From" id="Transaction_FromDate">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" class="form-control" placeholder="To" id="Transaction_ToDate">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary" >
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+        <div class="container recepaywiard">
+  <!-- <h3 class="mb-4">Receipt Voucher Summary</h3> -->
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-dark text-start">
+                <tr>
+                    <th>Sr.</th>
+                    <th>Entry Date</th>
+                    <th>Posting Date</th>
+                    <th>Credit / Debit Account</th>
+                    <th>Document Type</th>
+                    <th>Total Amount</th>
+                    <th>Reconciliation Status</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id="voucherTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Necessity -->
+ 
+<script>
+  function setLastMonthDates() {
+    const today = new Date();
+
+    // First day of last month
+    const firstDay = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+
+    // Last day of last month
+    const lastDay = new Date(today.getFullYear(), today.getMonth(), 0);
+
+    // Format date as yyyy-mm-dd
+    const formatDate = (date) => date.toISOString().split('T')[0];
+
+    document.getElementById("Transaction_FromDate").value = formatDate(firstDay);
+    document.getElementById("Transaction_ToDate").value = formatDate(lastDay);
+  }
+
+  // Auto-set on page load
+  window.onload = setLastMonthDates;
+</script>
+
+
+

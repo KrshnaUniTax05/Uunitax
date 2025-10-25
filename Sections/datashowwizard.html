@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View and Edit Sheet Data</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap 5 JS Bundle (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+<style>
+  .tablecontainer {
+  width: 70vw;            /* Width of the container is 70% of the viewport width */
+  height: auto;           /* Height is auto, but we'll ensure scrolling if the content overflows */
+  overflow: auto;         /* Enables scrolling when content overflows */
+  border: 1px solid #ddd; /* Optional: Adds a border around the table container */
+  outline: none;          /* Removes outline for focus (if desired) */
+  text-align: left;       /* Aligns text to the left */
+  margin: 20px auto;      /* Centers the container horizontally with some margin */
+  padding: 10px;          /* Padding around the container */
+}
+
+.tablecontainer table {
+  width: 100%;            /* Ensure the table takes the full width of the container */
+  table-layout: auto;     /* Allows the table to auto-adjust column widths based on content */
+  border-collapse: collapse; /* Ensures table borders are collapsed into a single line */
+  font-size: 14px;        /* Optional: Sets the font size for the table content */
+}
+
+.tablecontainer th,
+.tablecontainer td {
+  padding: 8px 12px; 
+  text-align: left;     /* Adds some padding inside each cell */
+  border: 1px solid #ddd; /* Adds a light border between cells */
+}
+
+.tablecontainer th {
+  background-color: #f4f4f4; /* Adds a background color to table headers */
+  font-weight: bold;           /* Makes the table header text bold */
+}
+
+.tablecontainer td {
+  background-color: #fff; /* White background for table data */
+}
+
+/* Add custom styling for the scrollable container */
+.tablecontainer::-webkit-scrollbar {
+  width: 8px; /* Custom width for the scrollbar */
+}
+
+.tablecontainer::-webkit-scrollbar-thumb {
+  background-color: #888; /* Darker color for the scrollbar thumb */
+  border-radius: 10px;     /* Rounded edges for the scrollbar thumb */
+}
+
+.tablecontainer::-webkit-scrollbar-thumb:hover {
+  background-color: #555; /* Darken the scrollbar when hovered */
+}
+
+
+  /* #dataTable{
+
+  } */
+</style>
+<body>
+  <div class="container  mt-4">
+    <div class="card">
+      <div class="card-header">Reports</div>
+      <div class="d-flex justify-content-between align-items-center  p-2 border-bottom bg-light rounded">
+        <div><strong>🛠️ Tools</strong></div>
+        <div>
+          <button type="button" class="btn btn-info" id="reorderColumnsBtn">Reorder Columns</button>
+        </div>
+  </div>
+      <div class="card-body">
+        <div class="dsw_header">
+          <div class="row">
+            <div class="col-md-9">
+              <input type="text" list="formNamesList" id="sheetName" placeholder="Enter Sheet Name"
+                  class="form-control mb-2" value="projectform" autocomplete="on">
+        
+              <!-- Datalist to hold the form names -->
+              <datalist id="formNamesList"></datalist>
+            </div>
+            <div class="col-md-3">
+              <button class="btn btn-primary" id="dsw_submit" onclick="fetchData()">Find</button>
+            </div>
+          </div>
+        </div>  
+      
+
+    <div id="tablecontainer">
+      <table id="dataTable" class="table table-bordered"></table>
+    </div>
+    
+    <!-- Table Footer for Rows per Page -->
+    <div id="footer"></div>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center" id="pagination"></ul>
+    </nav>
+    </div>
+    </div>
+    </div>
+
+      
+      <!-- Modal for Showing Details -->
+      <div class="modal fade" id="dataModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg"> <!-- This sets the modal size to medium -->
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-start" id="modalBody">
+              <!-- Dynamic form content will go here -->
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="simulateEsc()">Close</button>
+              <button type="button" class="btn btn-primary" id="editBtn">Edit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      
+
+      
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
