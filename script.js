@@ -1385,96 +1385,226 @@ function loadDynamicScript(src) {
 
 
 
-document.addEventListener("DOMContentLoaded", function () {
-  // Get all elements with class 'dynamic-content'
-  const contentDivs = document.querySelectorAll(".dynamic-content");
+// Robust dynamic content + script loader
+document.addEventListener("DOMContentLoaded", () => {
+  const contentDivs = Array.from(document.querySelectorAll(".dynamic-content"));
+  if (!contentDivs.length) return console.log("No .dynamic-content elements found.");
 
-  // Iterate over each div
-  contentDivs.forEach(function (contentDiv) {
-    const href = contentDiv.getAttribute("data-href");
-    const scriptSrc = contentDiv.getAttribute("data-script");
+  const origin = window.location.origin;
+  const pathnameParts = window.location.pathname.split("/").filter(Boolean); // e.g. ["Uunitax","index.html"]
+  const repoSegment = pathnameParts.length ? `/${pathnameParts[0]}/` : "/"; // "/Uunitax/" or "/"
+  const defaultPrefixes = [
+    "",                      // relative like "Sections/foo.html" or "foo.html"
+    "./",                    // "./Sections/foo.html"
+    "Uunitax/",              // "Uunitax/Sections/foo.html"
+    "/Uunitax/",             // absolute path from origin "/Uunitax/Sections/foo.html"
+    "Sections/",             // "Sections/foo.html"
+    "/Sections/",            // "/Sections/foo.html"
+    repoSegment,             // "/RepoName/foo.html"
+    `${origin}${repoSegment}`, // "https://.../RepoName/"
+    `${origin}/`,            // "https://.../"
+    `${origin}/Uunitax/`     // explicit origin + Uunitax
+  ];
 
-    if (!href) return; // Skip if no data-href found
+  const loadedScripts = new Set(); // keep track of loaded external scripts (full URLs)
+  const TIMEOUT = 8000; // ms per fetch attempt
 
-    // Function to load JS file dynamically
-    function loadDynamicScript(src) {
-      return new Promise((resolve, reject) => {
-        const existingScript = document.querySelector(`script[src="${src}"]`);
-        if (existingScript) return resolve(); // Skip if already loaded
+  // Utility: fetch with timeout and validate content-type
+  async function fetchWithTimeout(url, timeout = TIMEOUT) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+    try {
+      const resp = await fetch(url, { method: "GET", signal: controller.signal, cache: "no-cache" });
+      clearTimeout(id);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const ct = resp.headers.get("content-type") || "";
+      if (!ct.includes("text/html") && !ct.includes("text/plain")) {
+        // still accept text/plain (some hosts), but reject images etc.
+        // We will still attempt to read text — but reject if clearly not HTML.
+        // For strictness, you could reject here.
+      }
+      const text = await resp.text();
+      return { ok: true, text, url };
+    } catch (err) {
+      clearTimeout(id);
+      return { ok: false, error: err, url };
+    }
+  }
 
-        const script = document.createElement("script");
-        script.src = src;
-        script.onload = resolve;
-        script.onerror = () => reject(`❌ Failed to load script: ${src}`);
-        document.body.appendChild(script);
-      });
+  // Build candidate full URLs for a given href
+  function buildCandidatesFor(href) {
+    // If href is absolute URL, try it directly first
+    const candidates = [];
+    if (/^https?:\/\//i.test(href)) {
+      candidates.push(href);
+      return candidates;
     }
 
-    // Load content with fallback from both possible GitHub paths
-    function loadContent(primaryPath, fallbackPath) {
-      const xhr = new XMLHttpRequest();
-      xhr.open("GET", primaryPath, true);
+    // Normalize href: remove leading slash for combination
+    const bareHref = href.replace(/^\/+/, "");
 
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-          if (xhr.status === 200) {
-            // ✅ Successfully loaded HTML
-            contentDiv.innerHTML = xhr.responseText;
+    // For each prefix produce full URL or relative string depending
+    for (const p of defaultPrefixes) {
+      // if prefix already looks like origin, combine directly
+      if (p.startsWith("http")) {
+        candidates.push(p + bareHref);
+      } else if (p.startsWith("/")) {
+        candidates.push(origin + p + bareHref);
+      } else {
+        // include relative and origin versions
+        candidates.push(p + bareHref);           // e.g. "Uunitax/Sections/foo.html" or "Sections/foo.html" or "foo.html"
+        candidates.push(origin + "/" + p + bareHref); // e.g. "https://.../Uunitax/Sections/foo.html"
+      }
+    }
 
-            // Load external script if defined
-            if (scriptSrc) {
-              loadDynamicScript(scriptSrc)
-                .then(() => {
-                  // Execute inline <script> inside loaded HTML (if any)
-                  const inlineScript = contentDiv.querySelector("script");
-                  if (inlineScript) {
-                    try {
-                      eval(inlineScript.textContent);
-                    } catch (e) {
-                      console.error(`⚠️ Error in inline script from ${href}:`, e);
-                    }
-                  }
-                })
-                .catch((err) => console.error(err));
-            }
-          } else if (xhr.status === 404) {
-            // 🔁 Try fallback path
-            console.warn(`⚠️ ${primaryPath} not found. Trying fallback: ${fallbackPath}`);
-            const fallbackXhr = new XMLHttpRequest();
-            fallbackXhr.open("GET", fallbackPath, true);
-            fallbackXhr.onreadystatechange = function () {
-              if (fallbackXhr.readyState === XMLHttpRequest.DONE) {
-                if (fallbackXhr.status === 200) {
-                  contentDiv.innerHTML = fallbackXhr.responseText;
-                } else {
-                  console.error(`❌ Both ${primaryPath} and ${fallbackPath} failed to load.`);
-                }
-              }
-            };
-            fallbackXhr.send();
-          } else {
-            console.error(`⚠️ Error loading ${primaryPath}: ${xhr.statusText}`);
-          }
+    // Also try a candidate relative to the current document location directory
+    const currentDir = window.location.pathname.replace(/\/[^/]*$/, "/").replace(/^\/+/, "");
+    candidates.push(currentDir + bareHref);
+    candidates.push(origin + "/" + currentDir + bareHref);
+
+    // De-duplicate while preserving order
+    return Array.from(new Set(candidates));
+  }
+
+  // Resolve scriptSrc relative to a base URL (base is the successful HTML URL)
+  function resolveScriptUrl(scriptSrc, baseUrl) {
+    if (!scriptSrc) return null;
+    if (/^https?:\/\//i.test(scriptSrc)) return scriptSrc;
+    // If scriptSrc starts with '/', treat as origin absolute
+    if (scriptSrc.startsWith("/")) return origin + scriptSrc;
+    // If baseUrl is provided, build relative to base directory
+    try {
+      const baseDir = baseUrl.replace(/\/[^\/]*$/, "/"); // strip filename
+      return new URL(scriptSrc, baseDir).toString();
+    } catch (e) {
+      // fallback: try repoSegment
+      return origin + repoSegment + scriptSrc.replace(/^\/+/, "");
+    }
+  }
+
+  // Dynamically add external script if not already present
+  function loadExternalScriptOnce(url) {
+    return new Promise((resolve, reject) => {
+      if (!url) return resolve();
+      // If already loaded or loading (tracked by set), resolve
+      if (loadedScripts.has(url)) return resolve();
+      // If a <script src="..."> already exists in DOM with same src, treat as loaded
+      const existing = document.querySelector(`script[src="${url}"]`);
+      if (existing) {
+        loadedScripts.add(url);
+        // If existing script hasn't fired yet, attach onload/onerror
+        if (existing.hasAttribute("data-loaded")) {
+          return resolve();
+        } else {
+          existing.addEventListener("load", () => {
+            existing.setAttribute("data-loaded", "1");
+            loadedScripts.add(url);
+            resolve();
+          });
+          existing.addEventListener("error", (e) => reject(e));
+          return;
         }
+      }
+      // Otherwise create and append
+      const s = document.createElement("script");
+      s.src = url;
+      s.async = true;
+      s.onload = () => {
+        s.setAttribute("data-loaded", "1");
+        loadedScripts.add(url);
+        resolve();
       };
+      s.onerror = (e) => reject(new Error(`Failed to load script ${url}`));
+      document.body.appendChild(s);
+    });
+  }
 
-      xhr.send();
+  // Execute inline scripts inside a container safely
+  function runInlineScripts(container) {
+    // Query for inline scripts that have no src (we already handled external)
+    const scripts = Array.from(container.querySelectorAll("script")).filter(s => !s.src);
+    for (const inline of scripts) {
+      try {
+        // Using Function is slightly safer than eval and has its own scope
+        const code = inline.textContent || inline.innerText || "";
+        if (!code.trim()) continue;
+        const fn = new Function(code);
+        fn();
+      } catch (err) {
+        console.error("Error executing inline script:", err);
+      }
+    }
+  }
+
+  // Main loader per dynamic-content div
+  (async function processAll() {
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const contentDiv of contentDivs) {
+      const rawHref = (contentDiv.getAttribute("data-href") || "").trim();
+      const rawScript = (contentDiv.getAttribute("data-script") || "").trim();
+
+      if (!rawHref) {
+        contentDiv.setAttribute("data-load-status", "skipped");
+        continue;
+      }
+
+      const candidates = buildCandidatesFor(rawHref);
+      let loaded = false;
+      let usedUrl = null;
+      for (const candidate of candidates) {
+        try {
+          const res = await fetchWithTimeout(candidate);
+          if (res.ok) {
+            // success: insert content and resolve script relative to candidate
+            contentDiv.innerHTML = res.text;
+            usedUrl = res.url || candidate;
+            // load external script resolved against usedUrl
+            const scriptUrl = resolveScriptUrl(rawScript, usedUrl);
+            try {
+              if (scriptUrl) {
+                await loadExternalScriptOnce(scriptUrl);
+              }
+            } catch (err) {
+              console.warn(`External script failed to load for ${usedUrl}:`, err);
+              // continue — inline script may still run
+            }
+            // execute inline scripts (if any)
+            runInlineScripts(contentDiv);
+            contentDiv.setAttribute("data-load-status", "success");
+            loaded = true;
+            successCount++;
+            console.log(`✅ Loaded ${rawHref} from: ${candidate}`);
+            break;
+          } else {
+            // not ok: try next candidate
+            // console.warn(`Not ok: ${candidate} status`);
+          }
+        } catch (err) {
+          // fetchWithTimeout returns ok:false or thrown, we'll ignore and go next
+          // console.warn(`Fetch failed for ${candidate}:`, err);
+        }
+      }
+
+      if (!loaded) {
+        // Final fallback: show small friendly error inside the div (instead of console spam)
+        contentDiv.innerHTML = `<div style="color:#a00;font-size:14px;padding:16px;">
+          Could not load section: <strong>${rawHref}</strong>.
+          (Tried multiple paths.)</div>`;
+        contentDiv.setAttribute("data-load-status", "failed");
+        failCount++;
+        console.error(`❌ Failed to load ${rawHref} from all candidate paths.`);
+      }
     }
 
-    // Auto-detect path type for GitHub Pages
-    const isHostedOnGitHub = window.location.hostname.includes("github.io");
-
-    const basePath = isHostedOnGitHub
-      ? `${window.location.origin}/Uunitax/`
-      : "Uunitax/";
-
-    const fallbackPath = isHostedOnGitHub
-      ? `${window.location.origin}/Sections/`
-      : "Sections/";
-
-    // Try loading from both paths
-    loadContent(basePath + href, fallbackPath + href);
-  });
+    // Summary
+    console.log(`Loader summary: ${successCount} loaded, ${failCount} failed (of ${contentDivs.length}).`);
+    // Dispatch an event so other code can react if needed
+    document.dispatchEvent(new CustomEvent("dynamic-content-loaded", {
+      detail: { successCount, failCount }
+    }));
+  })();
 });
 
 
@@ -2266,6 +2396,7 @@ function openCustomOffcanvas(headercs, htmlcs) {
 
 
 // showBrowserNotification("Reminder", "CA exam study time!", "/icons/reminder.png");
+
 
 
 
