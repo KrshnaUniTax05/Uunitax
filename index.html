@@ -1,439 +1,345 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Professional Login & Signup</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      background-color: #f8f9fa;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .auth-container {
-      background: #ffffff;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      max-width: 500px;
-      width: 100%;
-      overflow: hidden;
-    }
-    .auth-header {
-      background: #007bff;
-      color: #ffffff;
-      text-align: center;
-      padding: 1.5rem;
-      font-size: 1.5rem;
-    }
-    .auth-tabs {
-      margin-top: 1rem;
-    }
-    .form-control {
-      border-radius: 5px;
-    }
-    .btn-primary, .btn-success {
-      border-radius: 5px;
-      padding: 0.75rem;
-    }
-    .form-label {
-      font-weight: bold;
-    }
-    .tab-content {
-      padding: 1.5rem;
-    }
-    .form-footer {
-      text-align: center;
-      margin-top: 1rem;
-    }
-    .form-footer a {
-      color: #007bff;
-      text-decoration: none;
-    }
-    .form-footer a:hover {
-      text-decoration: underline;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Login & Signup</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            font-family: 'Inter', sans-serif;
+        }
+        .card-shadow {
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
 </head>
-<body>
-  <div class="auth-container">
-    <div class="auth-header">Welcome to Our Platform</div>
-    <ul class="nav nav-tabs auth-tabs justify-content-center" id="authTabs" role="tablist">
-      <li class="nav-item">
-        <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true">Login</button>
-      </li>
-      <li class="nav-item">
-        <button class="nav-link" id="signup-tab" data-bs-toggle="tab" data-bs-target="#signup" type="button" role="tab" aria-controls="signup" aria-selected="false">Signup</button>
-      </li>
-    </ul>
-    <div class="tab-content" id="authTabsContent">
-      <!-- Login Form -->
-      <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-        <form id="loginForm"  name="login_unitax" method="post" autocomplete="off">
-          <div class="mb-3">
-            <label for="loginEmail" class="form-label">Email Address</label>
-            <input type="email" class="form-control" id="loginEmail" name="username" placeholder="Enter your email" required>
-          </div>
-          <div class="mb-3">
-            <label for="loginPassword" class="form-label">Password</label>
-            <input type="password" class="form-control" id="loginPassword" name="password" placeholder="Enter your password" required>
-          </div>
-          <button type="submit" id="loginsubmit" class="btn btn-primary w-100">Login</button>
-          <div class="form-footer mt-2">
-            <p>Don't have an account? <a href="#signup" data-bs-toggle="tab">Signup here</a></p>
-          </div>
-        </form>
-      </div>
-      <!-- Signup Form -->
-      <div class="tab-pane fade" id="signup" role="tabpanel" aria-labelledby="signup-tab">
-        <form id="signupForm" class="othertosend" name="signup_unitax" method="post" autocomplete="on" >
-            <div class="mb-3">
-              <label for="signupName" class="form-label">Full Name</label>
-              <input type="text" class="form-control" id="signupName" name="name" placeholder="Enter your full name" required>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <!-- Auth Container -->
+    <div id="authContainer" class="w-full max-w-md card-shadow bg-white rounded-xl overflow-hidden">
+        
+        <!-- Header -->
+        <div class="bg-blue-600 text-white text-center p-6 text-2xl font-bold">
+            Welcome to Our Platform
+        </div>
+        
+        <!-- Tabs -->
+        <div class="flex border-b border-gray-200">
+            <button id="login-tab" class="tab-button w-1/2 py-3 text-center text-lg font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all border-b-4 border-blue-600" data-target="login">Login</button>
+            <button id="signup-tab" class="tab-button w-1/2 py-3 text-center text-lg font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all border-b-4 border-transparent" data-target="signup">Signup</button>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6">
+            <div id="login" class="tab-content">
+                <!-- Login Form -->
+                <form id="loginForm" name="login_unitax" autocomplete="off" class="space-y-4">
+                    <div class="space-y-1">
+                        <label for="loginEmail" class="block text-sm font-medium text-gray-700">Email Address</label>
+                        <input type="email" id="loginEmail" name="email" placeholder="Enter your email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                    </div>
+                    <div class="space-y-1">
+                        <label for="loginPassword" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                    </div>
+                    <button type="submit" id="loginsubmit" class="btn-primary w-full p-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all shadow-md">
+                        Login
+                    </button>
+                    <p class="text-center text-sm mt-2">Don't have an account? 
+                        <a href="#" onclick="switchTab('signup')" class="text-blue-600 font-medium hover:text-blue-700">Signup here</a>
+                    </p>
+                </form>
             </div>
-            <div class="mb-3">
-              <label for="signupEmail" class="form-label">Email Address</label>
-              <input type="email" class="form-control" id="signupEmail" name="email"  placeholder="Enter your email" required>
+
+            <div id="signup" class="tab-content hidden">
+                <!-- Signup Form -->
+                <form id="signupForm" name="signup_unitax" autocomplete="on" class="space-y-4">
+                    <div class="space-y-1">
+                        <label for="signupName" class="block text-sm font-medium text-gray-700">Full Name</label>
+                        <input type="text" id="signupName" name="name" placeholder="Enter your full name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                    </div>
+                    <div class="space-y-1">
+                        <label for="signupEmail" class="block text-sm font-medium text-gray-700">Email Address</label>
+                        <input type="email" id="signupEmail" name="email" placeholder="Enter your email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                        <p id="emailError" class="text-xs text-red-500 hidden pt-1">This email is already registered.</p>
+                    </div>
+                    <div class="space-y-1">
+                        <label for="signupPassword" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input type="password" id="signupPassword" name="password" placeholder="Create a password" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                    </div>
+                    <div class="space-y-1">
+                        <label for="signupConfirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" name="confirm_password" placeholder="Confirm your password" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                        <p id="passwordError" class="text-xs text-red-500 hidden pt-1">Passwords do not match.</p>
+                    </div>
+                    <button type="submit" id="signup_btn" class="btn-primary w-full p-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all shadow-md">
+                        Signup
+                    </button>
+                </form>
             </div>
-            <div class="mb-3">
-              <label for="signupPassword" class="form-label">Password</label>
-              <input type="password" class="form-control" id="signupPassword" name="password" placeholder="Create a password" required>
-            </div>
-            <div class="mb-3">
-              <label for="signupConfirmPassword" class="form-label">Confirm Password</label>
-              <input type="password" class="form-control" id="signupConfirmPassword" name="confirm_password" placeholder="Confirm your password" required>
-              <input type="hidden" name="idstatus" value="active">
-              <div id="passwordError" class="text-danger mt-2" style="display: none;">Passwords do not match.</div>
-            </div>
-            <button type="submit" class="btn btn-success w-100" id="signup_btn" >Signup</button>
-          </form>
-      </div>
+        </div>
     </div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/scripts/ccw.js"></script>
 
-  <script>
-     // Event listener for form submission
-// Event listener for form submission
-document.querySelectorAll('.othertosend').forEach(form => {
-  form.addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission
-    const formId = event.target.id;
-    console.log('Form submission triggered');
+    <!-- Custom Message Box (Replaces alert/confirm) -->
+    <div id="messageBox" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white p-6 rounded-lg shadow-2xl max-w-sm w-full">
+            <h3 id="messageTitle" class="text-xl font-bold mb-3 text-gray-800"></h3>
+            <p id="messageText" class="text-gray-600 mb-4"></p>
+            <button onclick="document.getElementById('messageBox').classList.add('hidden')" class="w-full p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">OK</button>
+        </div>
+    </div>
 
-    // Check if the form is the signup form
-    const formName = form.getAttribute('name');
-    if (formName === 'signup_unitax') {
-      const password = document.getElementById('signupPassword').value;
-      const confirmPassword = document.getElementById('signupConfirmPassword').value;
-      const errorDiv = document.getElementById('passwordError');
+    <script>
+        // 🚀 CRITICAL: Update this URL with your deployed Apps Script Web App URL
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzpPlNeJL9yaiMVVeg3V38SgJLSBmITT6RYLM4_xnvZJA-FZKpXjKtDjBibv9ngtmTs/exec'; 
+        
+        // --- UI UTILITIES ---
 
-      // Validate passwords
-      if (password !== confirmPassword) {
-        console.log('Passwords do not match');
-        errorDiv.style.display = 'block'; // Show error message
-        return; // Stop submission if passwords do not match
-      } else {
-        console.log('Passwords match');
-        errorDiv.style.display = 'none'; // Hide error message
-      }
-    }
+        /** Shows a custom modal message box instead of using alert() */
+        function showMessageBox(title, message) {
+            document.getElementById('messageTitle').textContent = title;
+            document.getElementById('messageText').textContent = message;
+            document.getElementById('messageBox').classList.remove('hidden');
+            document.getElementById('messageBox').classList.add('flex');
+        }
 
-    // Add the 'recently_submitted' class to mark the form as recently submitted
-    form.classList.add('recently_submitted');
+        /** Switches the active tab content */
+        function switchTab(targetId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.getElementById(targetId).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-button').forEach(b => {
+                b.classList.remove('border-blue-600');
+                b.classList.add('border-transparent');
+            });
 
-    // Determine the sheet_name based on the form name
-    let sheetName;
-    if (formName === "login_unitax") {
-      sheetName = "login";
-    } else if (formName === "signup_unitax") {
-      sheetName = "signup";
-    } else {
-      // const userid = document.querySelector("#userid").value;
-      // sheetName = `${userid}_${form.id}`; // Default behavior for other form names
+            document.getElementById(`${targetId}-tab`).classList.remove('border-transparent');
+            document.getElementById(`${targetId}-tab`).classList.add('border-blue-600');
+            
+            // Clear errors on tab switch
+            document.getElementById('passwordError').classList.add('hidden');
+            document.getElementById('emailError').classList.add('hidden');
+        }
 
-      // Add user ID dynamically to the form
-      const useridInput = document.createElement('input');
-      useridInput.type = 'hidden';
-      useridInput.name = 'Status';
-      useridInput.value = "Active";
-      form.appendChild(useridInput);
-    }
+        // Initialize tabs to login view
+        document.addEventListener('DOMContentLoaded', () => {
+            switchTab('login');
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.addEventListener('click', (e) => switchTab(e.target.dataset.target));
+            });
+            document.getElementById('signupEmail').addEventListener('input', checkingDuplicacy);
+        });
 
-    // Add hidden fields dynamically
-    const formidInput = document.createElement('input');
-    formidInput.type = 'hidden';
-    formidInput.name = 'sheet_name';
-    formidInput.value = sheetName; // Use the determined sheet name
-    form.appendChild(formidInput);
+        // --- CORE API HANDLERS (using fetch) ---
 
-    // Convert relevant fields to uppercase or proper case before submission
-    const uppercaseInputs = form.querySelectorAll('.uppercase-input');
-    const propercaseInputs = form.querySelectorAll('.propercase-input');
+        /**
+         * Core function to handle POST requests (Save/Update/Delete).
+         */
+        async function apiPost(action, payload = {}, sheetName = 'signup') {
+            const button = document.getElementById(action === 'saveData' ? 'signup_btn' : 'loginsubmit');
+            if (button) {
+                button.innerHTML = 'Processing...';
+                button.disabled = true;
+            }
 
-    // Apply uppercase conversion
-    uppercaseInputs.forEach(input => convertToUppercase(input));
+            const uniqueCode = crypto.randomUUID();
+            const formData = new FormData();
+            
+            // Add control parameters
+            formData.append('action', action);
+            formData.append('sheet_name', sheetName);
+            formData.append('uniqueCode', uniqueCode);
+            
+            // Add payload data
+            for (const key in payload) {
+                formData.append(key, payload[key]);
+            }
 
-    // Apply proper case conversion
-    propercaseInputs.forEach(input => convertToProperCase(input));
+            try {
+                const response = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
 
-    // Prepare the form data to send
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData);
+                const result = await response.json();
+                
+                if (button) {
+                    button.innerHTML = action === 'saveData' ? 'Signup' : 'Login';
+                    button.disabled = false;
+                }
+                
+                return result;
 
-    // Construct the query string
-    const queryString = new URLSearchParams(data).toString();
+            } catch (error) {
+                if (button) {
+                    button.innerHTML = action === 'saveData' ? 'Signup' : 'Login';
+                    button.disabled = false;
+                }
+                showMessageBox('Network Error', 'Failed to connect to the Apps Script server. Check the URL and deployment.');
+                return { status: "ERROR", message: error.message };
+            }
+        }
 
-    // Log the data for debugging
-    console.log('Form Name:', formName);
-    console.log('Sheet Name:', sheetName);
-    console.log('Form Data:', data);
-    console.log('Query String:', queryString);
+        /**
+         * Core function to handle GET requests (Read/Query).
+         */
+        async function apiGet(action, params = {}, sheetName = 'signup') {
+            const uniqueCode = crypto.randomUUID();
+            
+            const searchParams = new URLSearchParams({
+                action,
+                sheet_name: sheetName,
+                uniqueCode,
+                ...params
+            });
+            
+            const fullUrl = `${APP_SCRIPT_URL}?${searchParams.toString()}`;
 
-    // Create the URL for JSONP
-    const scriptURL = "https://script.google.com/macros/s/AKfycbx96nZGc4TXpyyYDJ2Dvxbqjfp7YLAEff6CzD0DTR9mw8GQeXpVeQPkoNMJ--6EiI53/exec" + "?callback=handleResponse&" + queryString;
+            try {
+                const response = await fetch(fullUrl);
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                showMessageBox('Network Error', 'Failed to connect to the Apps Script server. Check the URL and deployment.');
+                return { status: "ERROR", message: error.message };
+            }
+        }
 
-    // Create and append the script tag for JSONP
-    const script = document.createElement("script");
-    script.src = scriptURL;
-    document.body.appendChild(script);
+        // --- AUTHENTICATION LOGIC ---
 
-    resetForm(formId)
-  });
-});
+        // 1. SIGNUP LOGIC
+        document.getElementById('signupForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); 
+            
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            const errorDiv = document.getElementById('passwordError');
 
+            if (password !== confirmPassword) {
+                errorDiv.classList.remove('hidden');
+                return;
+            } else {
+                errorDiv.classList.add('hidden');
+            }
 
+            const form = event.target;
+            const formData = new FormData(form);
+            const payload = Object.fromEntries(formData);
+            
+            // Add required status field
+            payload.idstatus = "active";
+            
+            // Remove confirm password before sending to server
+            delete payload.confirm_password; 
 
-function resetForm(formId) {
-  const form = document.getElementById(formId);
-  if (form) {
-    form.reset(); // Reset all form fields to their default values
-    const errorDiv = document.getElementById('passwordError');
-    if (errorDiv) {
-      errorDiv.style.display = 'none'; // Hide the error message
-    }
-    console.log(`Form with ID ${formId} has been reset.`);
-  } else {
-    console.error(`Form with ID ${formId} not found.`);
-  }
-}
+            // Check for duplication one last time before submitting
+            const emailCheckResponse = await apiGet('getRowData', { column_to_search: 'email', document_number: payload.email }, 'signup');
+            if (emailCheckResponse.status === "SUCCESS" && emailCheckResponse.matching_rows.length > 0) {
+                 showMessageBox('Signup Failed', 'This email is already registered. Please log in or use a different email.');
+                 return;
+            }
 
+            const result = await apiPost('saveData', payload, 'signup');
 
+            if (result.status === "SUCCESS") {
+                showMessageBox('Signup Successful!', `Welcome ${payload.name}. Your document number is: ${result.documentNumber}.`);
+                form.reset();
+                switchTab('login');
+            } else {
+                showMessageBox('Signup Failed', result.message || 'An unknown error occurred during signup.');
+            }
+        });
 
-document.getElementById('loginForm').addEventListener('submit', function (event) {
-  // Prevent the default form submission behavior
-  event.preventDefault();
-  let loginsubmit = document.getElementById("loginsubmit");
-loginsubmit.innerHTML = "Loading...";  // Set button text to "Loading..."
-loginsubmit.disabled = true;  // Disable the button
+        // 2. LOGIN LOGIC
+        document.getElementById('loginForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            const loginButton = document.getElementById('loginsubmit');
 
+            loginButton.innerHTML = "Checking...";
+            loginButton.disabled = true;
 
-  // Collect the input values
-  
-  passcheck();
-  emailcheck1();
-  
-});
+            try {
+                // Step 1: Check for Email existence
+                const emailCheckResponse = await apiGet('getRowData', { 
+                    column_to_search: 'email', 
+                    document_number: email 
+                }, 'signup');
 
-// 🚀 CRITICAL FIX: Define the Google Apps Script URL once as a constant.
-// ALWAYS ensure this URL is the latest, publicly deployed URL.
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYFd-rprtOxI8dCIZuM9_b-VIQloqCDZZLtqOHP2e_6qp9WPW7BQaxg7an4YrjF82P/exec';
+                if (emailCheckResponse.status !== "SUCCESS" || emailCheckResponse.matching_rows.length === 0) {
+                    showMessageBox('Login Failed', 'User not found. Check your email or sign up.');
+                    return;
+                }
 
-/**
- * Executes a JSONP request to the Google Script to check if a password exists.
- */
-function passcheck(){
-    const action = 'getRowData';
-    const sheetName = 'signup';
-    const password = document.getElementById('loginPassword').value;
-    const columnToSearch = 'password';
-    
-    // Dynamically adjust the `document_number` parameter
-    const documentParam = password === "*" ? "" : encodeURIComponent(password);
-    
-    // Construct the URL using the constant
-    const url = `${GOOGLE_SCRIPT_URL}?action=${encodeURIComponent(action)}&sheet_name=${encodeURIComponent(sheetName)}&column_to_search=${encodeURIComponent(columnToSearch)}&document_number=${documentParam}&callback=handleLogin`
-    
-    console.log('Password Check URL:', url);
-    
-    // Dynamically load JSONP response
-    const script = document.createElement('script');
-    script.src = url;
-    script.onerror = function () {
-        // More specific error for better debugging
-        console.error('NETWORK ERROR: Failed to load script. Check Google Apps Script deployment permissions ("Anyone") and the URL.');
-    };
-    document.body.appendChild(script);
-}
+                const userData = emailCheckResponse.matching_rows[0];
 
-/**
- * Executes a JSONP request to the Google Script to check if an email exists.
- */
-function emailcheck1(){
-    const action = 'getRowData';
-    const sheetName = 'signup';
-    // Renamed variable for clarity (using email input)
-    const email = document.getElementById('loginEmail').value; 
-    let columnToSearch = "email";
+                // Step 2: Validate Password and Status
+                if (userData.password.trim() === password && userData.idstatus === "active") {
+                    
+                    // --- Session Management (Using localStorage for this demo) ---
+                    console.log("Login Success. Saving session data.");
+                    localStorage.setItem('userloginid', userData['Document Number']);
+                    localStorage.setItem('userName', userData.name);
+                    localStorage.setItem('useremail_we', userData.email);
+                    // -------------------------------------------------------------
+                    
+                    showMessageBox('Login Successful', `Welcome back, ${userData.name}! Redirecting...`);
+                    // Simulate redirection to a dashboard or index page
+                    // In a real scenario, this would go to your protected app page.
+                    setTimeout(() => {
+                        window.location.href = './index.html' || '/'; // Use a relative path
+                    }, 1500);
+                    
+                } else {
+                    showMessageBox('Access Denied', 'Invalid password or account is not active.');
+                }
+            } catch (error) {
+                showMessageBox('Critical Error', 'An unexpected error occurred during the login process.');
+                console.error(error);
+            } finally {
+                loginButton.innerHTML = "Login";
+                loginButton.disabled = false;
+            }
+        });
 
-    // Dynamically adjust the `document_number` parameter
-    const documentParam = email === "*" ? "" : encodeURIComponent(email);
+        // 3. EMAIL DUPLICACY CHECK (Debounced)
+        let debounceTimer; 
 
-    // Construct the URL using the constant
-    const url = `${GOOGLE_SCRIPT_URL}?action=${encodeURIComponent(action)}&sheet_name=${encodeURIComponent(sheetName)}&column_to_search=${encodeURIComponent(columnToSearch)}&document_number=${documentParam}&callback=handleLogin`;
+        function checkingDuplicacy() {
+            const emailInput = document.getElementById('signupEmail');
+            const email = emailInput.value.trim();
+            const errorDiv = document.getElementById('emailError');
 
-    console.log('Email Check URL:', url);
+            if (!email) {
+                clearTimeout(debounceTimer);
+                errorDiv.classList.add('hidden');
+                emailInput.classList.remove('border-red-500');
+                return;
+            }
 
-    // Dynamically load JSONP response
-    const script = document.createElement('script');
-    script.src = url;
-    script.onerror = function () {
-        // More specific error for better debugging
-        console.error('NETWORK ERROR: Failed to load script. Check Google Apps Script deployment permissions ("Anyone") and the URL.');
-    };
-    document.body.appendChild(script);
-}
+            clearTimeout(debounceTimer);
 
+            debounceTimer = setTimeout(async () => {
+                const response = await apiGet('getRowData', { 
+                    column_to_search: 'email', 
+                    document_number: email 
+                }, 'signup');
 
-function handleLogin(response) {
-  // Get the entered password
-  const password = document.getElementById('loginPassword').value.trim();
-  const name = response.name;
-  // console.log(name)
-  // Assuming response contains the correct user data
-  if (response.status === "success" && response.matching_rows && response.matching_rows.length > 0) {
-    
-    const userData = response.matching_rows[0];
-    // console.log("Login Success");
-    // console.log(userData);
-
-    // Check password and account status
-    if (userData.password.trim() === password && userData.idstatus === "active") {
-    console.log("Password Match and Access Granted");
-    
-    // --- Data to be saved ---
-    const documentNumber = userData["Document Number"];
-    const userName = userData.name;
-    const userEmail = userData.email;
-
-    console.log("User Document Number:", documentNumber);
-    console.log("User Name:", userName);
-    
-    // ----------------------------------------------------------------
-    // 💡 MODIFICATION: Save user data directly to Local Storage
-    // ----------------------------------------------------------------
-    
-    // Using localStorage (data persists after browser is closed)
-    localStorage.setItem('userloginid', documentNumber);
-    localStorage.setItem('userName', userName);
-    localStorage.setItem('useremail_we', userEmail);
-    
-    console.log("User data saved to Local Storage.");
-    
-    // ----------------------------------------------------------------
-    // 🚀 CRITICAL FIX: Redirect using a relative path
-    // ----------------------------------------------------------------
-    // This redirects to index.html in the same directory, 
-    // working correctly on any live domain (GitHub, Netlify, etc.).
-    window.location.href = 'index.html'; 
-    
-    console.log("Redirecting to index.html..."); 
-
-    } else {
-      alert("Access Denied: Either password is incorrect or account is not active");
-      loginsubmit.innerHTML = "Login";  // Set button text to "Loading..."
-    loginsubmit.disabled = false; 
-    }
-  } else {
-    console.log("Login Failed");
-    alert("Login Failed because either username or password not matched.");
-    loginsubmit.innerHTML = "Login";  // Set button text to "Loading..."
-    loginsubmit.disabled = false; 
-  }
-}
-
-// Function to generate a secure token (using email + secret key)
-const secretKey = 'mySuperSecretKey12345'; // Use a strong, unique secret key
-
-// Function to generate a secure token
-function generateSecureToken(email, name, documentNumber) {
-    const data = `${email}:${name}:${documentNumber}`;
-    const hash = CryptoJS.HmacSHA256(data, secretKey).toString(CryptoJS.enc.Hex);
-    return `${hash}`;
-  }
-
-
-// Hash the token (using a simple SHA-256 hash, can be done using Web Crypto API)
-// async function hashToken(rawToken) {
-//   const encoder = new TextEncoder();
-//   const data = encoder.encode(rawToken);
-//   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-//   const hashArray = Array.from(new Uint8Array(hashBuffer));
-//   return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-// }
-
-
-let debounceTimer; // Declare a global variable for the debounce timer
-document.getElementById('signupEmail').addEventListener('input', checkingDuplicacy);
-
-function checkingDuplicacy() {
-  const email = document.getElementById('signupEmail').value.trim();
-  const form =document.getElementById('loginForm').id
-  // If the email is empty, no need to check for duplicacy
-  if (!email) return;
-  if(form == "loginForm") return;
-
-  // Clear the previous timer (if any)
-  clearTimeout(debounceTimer);
-
-  // Set a new timer to trigger the request after 500ms (adjust this as needed)
-  debounceTimer = setTimeout(() => {
-    const action = 'getRowData';
-    const sheetName = 'signup';
-    const columnToSearch = 'email';
-
-    // Dynamically adjust the document_number parameter (email in this case)
-    const documentParam = encodeURIComponent(email);
-
-    // Construct the URL for the request
-    const url = `https://script.google.com/macros/s/AKfycbx96nZGc4TXpyyYDJ2Dvxbqjfp7YLAEff6CzD0DTR9mw8GQeXpVeQPkoNMJ--6EiI53/exec?action=${encodeURIComponent(action)}&sheet_name=${encodeURIComponent(sheetName)}&column_to_search=${encodeURIComponent(columnToSearch)}&document_number=${documentParam}&callback=emailcheck`;
-
-    console.log('Request URL:', url);
-
-    // Dynamically load JSONP response
-    const script = document.createElement('script');
-    script.src = url;
-    script.onerror = function () {
-      console.error('Failed to load script. Check the URL or network connection.');
-    };
-    document.body.appendChild(script);
-  }, 2000);  // Delay in milliseconds (500ms in this case)
-}
-
-// Callback function to handle the response from the Google Apps Script
-function emailcheck(response) {
-  console.log(response)
-  if(response.status === "Error"){
-    document.getElementById('signupEmail').style.borderColor = "green";
-  } else{
-    document.getElementById('signupEmail').style.borderColor = "red";
-    document.getElementById('signupEmail').style.outline = "none";
-    document.getElementById('signupEmail').title = "Email is already registered";
-    alert('Provided email is already registered.')
-  }
-
-
-}
-
-// function emailcheck(response){
-//   console.log(response)
-// }
-
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
+                if (response.status === "SUCCESS" && response.matching_rows.length > 0) {
+                    errorDiv.classList.remove('hidden');
+                    emailInput.classList.add('border-red-500');
+                    document.getElementById('signup_btn').disabled = true;
+                } else {
+                    errorDiv.classList.add('hidden');
+                    emailInput.classList.remove('border-red-500');
+                    document.getElementById('signup_btn').disabled = false;
+                }
+            }, 700); // 700ms debounce
+        }
+    </script>
 </body>
 </html>
