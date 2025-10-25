@@ -1395,7 +1395,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const repoSegment = pathnameParts.length ? `/${pathnameParts[0]}/` : "/"; // "/Uunitax/" or "/"
   const defaultPrefixes = [
     "",                      // relative like "Sections/foo.html" or "foo.html"
-    "./",                    // "./Sections/foo.html"
     "Uunitax/",              // "Uunitax/Sections/foo.html"
     "/Uunitax/",             // absolute path from origin "/Uunitax/Sections/foo.html"
     "Sections/",             // "Sections/foo.html"
@@ -2396,6 +2395,7 @@ function openCustomOffcanvas(headercs, htmlcs) {
 
 
 // showBrowserNotification("Reminder", "CA exam study time!", "/icons/reminder.png");
+
 
 
 
