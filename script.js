@@ -1384,17 +1384,16 @@ function loadDynamicScript(src) {
 }
 
 
-
-/document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
   const contentDivs = document.querySelectorAll(".dynamic-content");
   const loadedScripts = new Set();
 
-  // Normalize helper: join origin and path safely
+  // Normalize helper: join origin and path safely (kept for other uses)
   function joinUrl(...parts) {
     return parts
       .map((p, i) => {
-        if (i === 0) return p.replace(/\/+$/, ""); // first: keep protocol+host no trailing slash
-        return p.replace(/^\/+|\/+$/g, ""); // trim leading/trailing slashes
+        if (i === 0) return p.replace(/\/+$/, "");
+        return p.replace(/^\/+|\/+$/g, "");
       })
       .filter(Boolean)
       .join("/");
@@ -1408,32 +1407,25 @@ function loadDynamicScript(src) {
     if (!rawHref) return candidates;
     const href = rawHref.trim();
 
-    // If absolute http(s)
     if (/^https?:\/\//i.test(href)) {
       candidates.push(href);
       return Array.from(new Set(candidates));
     }
 
-    // If starts with slash -> origin + href
     if (href.startsWith("/")) {
       candidates.push(joinUrl(origin, href));
       candidates.push(joinUrl(origin, "Uunitax", href.replace(/^\/+/, "")));
       return Array.from(new Set(candidates));
     }
 
-    // Plain relative paths: try multiple sane possibilities
-    // 1) origin/Uunitax/<href>
+    // Relative paths: try multiple sane possibilities (HTML file candidates only)
     candidates.push(joinUrl(origin, "Uunitax", href));
-    // 2) origin/<href>
     candidates.push(joinUrl(origin, href));
-    // 3) origin/Uunitax/Sections/<lastPart> (in case href is just filename or Sections/... mismatch)
     const lastPart = href.split("/").pop();
     candidates.push(joinUrl(origin, "Uunitax", "Sections", lastPart));
-    // 4) origin/Sections/<lastPart>
     candidates.push(joinUrl(origin, "Sections", lastPart));
-    // 5) Try the raw relative path (useful for local / same-folder dev)
     candidates.push(href);
-    // 6) If href already contains "Uunitax", also try without it (reverse)
+
     if (href.toLowerCase().includes("uunitax")) {
       const stripped = href.replace(/Uunitax\/?/i, "");
       if (stripped) {
@@ -1449,7 +1441,7 @@ function loadDynamicScript(src) {
   function loadExternalScript(src) {
     return new Promise((resolve, reject) => {
       if (!src) return resolve();
-      const abs = src; // src will be normalized before calling
+      const abs = src;
       if (loadedScripts.has(abs)) return resolve();
       if (document.querySelector(`script[src="${abs}"]`)) {
         loadedScripts.add(abs);
@@ -1457,22 +1449,21 @@ function loadDynamicScript(src) {
       }
       const s = document.createElement("script");
       s.src = abs;
-      s.async = false; // preserve execution order if needed
+      s.async = false;
       s.onload = () => {
         loadedScripts.add(abs);
         resolve();
       };
-      s.onerror = (e) => reject(new Error(`Failed to load script: ${abs}`));
+      s.onerror = () => reject(new Error(`Failed to load script: ${abs}`));
       document.body.appendChild(s);
     });
   }
 
   // Execute inline <script> nodes found inside the contentDiv
-  function runInlineScripts(contentDiv, baseUrl) {
+  function runInlineScripts(contentDiv) {
     const inlineScripts = Array.from(contentDiv.querySelectorAll("script")).filter(s => !s.src);
     for (const sc of inlineScripts) {
       try {
-        // Use new Function to avoid scope issues and to be slightly safer than eval
         const fn = new Function(sc.textContent);
         fn();
       } catch (err) {
@@ -1480,7 +1471,7 @@ function loadDynamicScript(src) {
       }
     }
 
-    // Also handle any <script src="..."> tags that were inside content (they won't auto-load when inserted by innerHTML)
+    // Return list of external src values that were inside the HTML (raw, as written)
     const externalFromHtml = Array.from(contentDiv.querySelectorAll("script[src]")).map(s => s.getAttribute("src"));
     return externalFromHtml;
   }
@@ -1489,17 +1480,14 @@ function loadDynamicScript(src) {
   async function fetchFirstSuccessful(candidates) {
     for (const c of candidates) {
       try {
-        // use fetch to test quickly
         const res = await fetch(c, { method: "GET", cache: "no-cache" });
         if (res.ok) {
           const text = await res.text();
           return { url: c, text };
         } else {
-          // not ok (404 etc.) -> continue
           console.debug(`Loader: ${c} responded ${res.status}`);
         }
       } catch (err) {
-        // network error -> continue
         console.debug(`Loader: failed to fetch ${c} — ${err.message}`);
       }
     }
@@ -1514,7 +1502,6 @@ function loadDynamicScript(src) {
     if (!rawHref) return;
 
     const candidates = buildCandidates(rawHref);
-    // Try candidates
     const result = await fetchFirstSuccessful(candidates);
 
     if (!result) {
@@ -1523,28 +1510,26 @@ function loadDynamicScript(src) {
       return;
     }
 
-    // Success: inject HTML
+    // Inject the HTML
     contentDiv.innerHTML = result.text;
 
-    // Resolve and load scripts:
-    // 1) If data-script provided, resolve it relative to the HTML URL that succeeded
+    // Resolve scripts relative to the HTML URL that loaded (no aggressive origin-based fallbacks)
     try {
       const htmlUrl = result.url;
       let externalScriptList = [];
 
       if (rawScript) {
-        // Resolve rawScript relative to htmlUrl
         try {
+          // Strict: resolve relative to htmlUrl only. If this fails, fall back to rawScript as-is.
           const resolved = new URL(rawScript, htmlUrl).href;
           externalScriptList.push(resolved);
         } catch (e) {
-          // fallback: try sensible candidates
-          externalScriptList.push(joinUrl(window.location.origin, rawScript));
+          // If URL resolution fails (shouldn't for relative paths), keep rawScript (do NOT prepend origin)
           externalScriptList.push(rawScript);
         }
       }
 
-      // 2) Also detect any <script src="..."> that were part of the loaded HTML and add them
+      // Also detect any <script src="..."> that were part of the loaded HTML and resolve them relative to htmlUrl
       const inlineExternal = runInlineScripts(contentDiv, result.url);
       inlineExternal.forEach(s => {
         try {
@@ -1555,7 +1540,7 @@ function loadDynamicScript(src) {
         }
       });
 
-      // Remove duplicates and load in sequence
+      // Deduplicate and load in sequence
       externalScriptList = Array.from(new Set(externalScriptList)).filter(Boolean);
       for (const ext of externalScriptList) {
         try {
@@ -2359,6 +2344,7 @@ function openCustomOffcanvas(headercs, htmlcs) {
 
 
 // showBrowserNotification("Reminder", "CA exam study time!", "/icons/reminder.png");
+
 
 
 
